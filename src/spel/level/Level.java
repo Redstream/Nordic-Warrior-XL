@@ -21,7 +21,6 @@ public class Level extends BasicLevel {
 	
 	public long start = 0;
 	public long time = 0;
-	public boolean finnished = false;
 	public int shake = 0;
 	public Rectangle finnish = new Rectangle(-100,-100,72,72);
 	public boolean won = false;
@@ -62,10 +61,8 @@ public class Level extends BasicLevel {
 	public void update(){
 		if(Entity.intersect(finnish, player.hitBox)){
 			won = true;
-		}else{
-			won = false;
 		}
-		System.out.println(finnishTime + "\n"+ time);
+		//System.out.println(finnishTime + "\n"+ time);
 		if(won){
 			if(finnishTime == 0){
 				finnishTime = time + 3000;

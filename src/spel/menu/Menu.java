@@ -1,10 +1,11 @@
 package spel.menu;
 
+import spel.Game;
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -38,13 +39,12 @@ public class Menu extends JPanel{
 	
 	public static void paintBg(Graphics g, JPanel j){
 		g.setColor(Color.black);
-		
-		BufferedImage img;
+
 		try{
-			img = ImageIO.read(new File("src/res/graphics/nordic_warriorXL.jpg"));
+			BufferedImage img = ImageIO.read(Menu.class.getResourceAsStream("/res/graphics/nordic_warriorXL.jpg"));
 			g.drawImage(img, 0, 0, j.getWidth(),j.getHeight(),null);
 		}catch(Exception e){
-			//Game.information(2,e.toString());
+			Game.information(2,e.toString());
 		}
 		
 		

@@ -27,14 +27,14 @@ public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public static Game game;
-	public static final String NAME = "Spel";
-	public static int stats = 2;
-	public static int information = 0;
+	public static final String NAME = "Nordic-Warrior-XL";
+	private static int stats = 0;
+	private static int information = 0;
 	public static int WIDTH = 700;
 	public static int HEIGHT = WIDTH * 9 / 16;
-	public static float scale = 2f;
-	public static Dimension screenSize = new Dimension((int)(WIDTH*scale),(int)(WIDTH*scale*9/16));
-	public static boolean FULLSCREEN = false;
+	private static float scale = 2f;
+	private static Dimension screenSize = new Dimension((int)(WIDTH*scale),(int)(WIDTH*scale*9/16));
+	private static boolean FULLSCREEN = false;
 	public static Random random = new Random();
 
 	private BufferedImage image;
@@ -44,8 +44,8 @@ public class Game extends Canvas implements Runnable {
 	private int updates;
 
 	private Thread thread;
-	public boolean running = false;
-	public boolean paused = true;
+	private boolean running = false;
+	private boolean paused = true;
 
 	private JFrame frame;
 	private Screen screen;
@@ -61,7 +61,7 @@ public class Game extends Canvas implements Runnable {
 	
 
 	// hittar skärmens storlek och ställer in rutans storlek därefter.
-	public void setSize() {
+	private void setSize() {
 		screen = new Screen(WIDTH,HEIGHT);
 		frame = new JFrame("Loading");
 		
@@ -99,7 +99,7 @@ public class Game extends Canvas implements Runnable {
 			frame.getContentPane().setSize(screenSize);
 			frame.setPreferredSize(screenSize);
 			menu = new Menu(screenSize.width,screenSize.height);
-			frame.setUndecorated(true);
+			frame.setUndecorated(false);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class Game extends Canvas implements Runnable {
 	DecimalFormat df = new DecimalFormat("#.###");
 
 	// grafik metod. Ritar i princip ut allt som man kan se på skärmen.
-	public void render() {
+	private void render() {
 		// Skapar en bufferstrategy där man gör redo 2 bilder innan man ritar
 		// ut dom.
 		BufferStrategy bs = getBufferStrategy();
@@ -164,7 +164,7 @@ public class Game extends Canvas implements Runnable {
 		if (level.shake > 0) {;
 			Random r = new Random();
 			//int rand = r.nextInt(level.shake) - level.shake / 2;
-			g.drawImage(image, 0 + r.nextInt(level.shake) - level.shake / 2, 0 + r.nextInt(level.shake) - level.shake / 2
+			g.drawImage(image,  r.nextInt(level.shake) - level.shake / 2, r.nextInt(level.shake) - level.shake / 2
 					, getWidth() + r.nextInt(level.shake) - level.shake / 2, getHeight() + r.nextInt(level.shake) - level.shake / 2, null);
 		} else {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
@@ -172,7 +172,7 @@ public class Game extends Canvas implements Runnable {
 		
 		if(level.won){
 			g.setFont(new Font("Verdana", Font.PLAIN, 20));
-			g.drawString("You Win!", getWidth()/2, getHeight()/2);
+			g.drawString("Level completed!", getWidth()/2, getHeight()/2);
 		}
 
 		// Visar stats.
@@ -245,7 +245,7 @@ public class Game extends Canvas implements Runnable {
 
 	// startar game-loopen
 	public void start() {
-		if (running == true) return;
+		if (running) return;
 		running = true;
 		thread = new Thread(this);
 		requestFocus();
@@ -254,7 +254,7 @@ public class Game extends Canvas implements Runnable {
 
 	// stänger av spelet
 	public void stop() {
-		if (running == false) return;
+		if (!running) return;
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
@@ -263,7 +263,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void togglePause() {
-		if (paused == true) {
+		if (paused) {
 			cl.show(frame.getContentPane(), "2");
 			requestFocus();
 		} else {
@@ -302,9 +302,7 @@ public class Game extends Canvas implements Runnable {
 
 	public static void main(String[] args) {
 		game = new Game();
-		System.out.println(random.nextInt(100));
 		game.start();
-
 	}
 
 }

@@ -1,0 +1,5 @@
+A demo map to get a feel for the game and what you can do.
+To use this map as a base when creating one for your self
+just load "Demo-map" when using the mapmaker.
+
+Click the map again to start playing.

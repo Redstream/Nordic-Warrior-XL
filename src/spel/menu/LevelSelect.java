@@ -44,23 +44,12 @@ public class LevelSelect extends JPanel {
 				URL inputUrl;
 				File dest;
 				
-				inputUrl = getClass().getResource("/res/maps/olle.txt");
-				dest = new File(Level.mapfolder+"//Olle.txt");
+				inputUrl = getClass().getResource("/res/maps/Demo-map.txt");
+				dest = new File(Level.mapfolder+"//Demo-map.txt");
 				FileUtils.copyURLToFile(inputUrl, dest);
-				
-				inputUrl = getClass().getResource("/res/maps/redstream.txt");
-				dest = new File(Level.mapfolder+"//Redstream.txt");
+				inputUrl = getClass().getResource("/res/maps/Demo-map.desc.txt");
+				dest = new File(Level.mapfolder+"//Demo-map.desc.txt");
 				FileUtils.copyURLToFile(inputUrl, dest);
-				
-				inputUrl = getClass().getResource("/res/maps/500test.txt");
-				dest = new File(Level.mapfolder+"//500test.txt");
-				FileUtils.copyURLToFile(inputUrl, dest);
-				
-				
-				inputUrl = getClass().getResource("/res/maps/promap.txt");
-				dest = new File(Level.mapfolder+"//Promap.txt");
-				FileUtils.copyURLToFile(inputUrl, dest);
-				
 			}catch(Exception ex){
 				Game.information(2,ex.toString());
 			}
@@ -72,13 +61,13 @@ public class LevelSelect extends JPanel {
 		textarea = new JEditorPane("text/html", "");
 		textarea.setEditable(false);
 		add(textarea);
-		setText("<b>Name:</b><br> <br><b>Description:</b><br> ");
+		setText("Select a map.");
 
 		MouseListener mouseListener = new MouseAdapter() {
 			String lastclicked = "";
 
 			public void mouseClicked(MouseEvent e) {
-				String level = (String) list.getSelectedValue();
+				String level = list.getSelectedValue();
 				
 				if (!lastclicked.equalsIgnoreCase(list.getSelectedValue())) {			
 					try {
@@ -89,14 +78,13 @@ public class LevelSelect extends JPanel {
 							s += line + "<br>";
 						}
 						in.close();
-						setText("<b>Name:</b><br> " + level + "<br><b>Description:</b><br>" + s);
+						setText("<b>Name:</b> " + level + "<br><b>Description:</b><br>" + s);
 					} catch (Exception ex) {
 						setText("<b>Name:</b><br> " + level + "<br><b>Description:</b><br>No map info");
 					}
-					lastclicked = (String) list.getSelectedValue();
+					lastclicked = list.getSelectedValue();
 				} else {
-					setLevel((String) list.getSelectedValue() + ".txt", false);
-					
+					setLevel(list.getSelectedValue() + ".txt", false);
 				}
 			}
 		};
