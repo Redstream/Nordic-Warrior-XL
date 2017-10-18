@@ -1,5 +1,5 @@
 # Nordic Warrior XL
-2D Platform game with a nostalgic feel. Created sometime in 2014.
+2D Platform game with a nostalgic feel. Created as a Gymnasiearbete/High school project in 2014
 
 ##### Want to play the game?
 Just download and run 'Nordic-Warrior-XL.jar'
