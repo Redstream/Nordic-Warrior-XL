@@ -12,15 +12,20 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Random;
 
 import javax.swing.JFrame;
 
+import org.apache.commons.io.FileUtils;
 import spel.graphics.Screen;
 import spel.input.Keyboard;
 import spel.level.Level;
 import spel.menu.Menu;
+
+import static spel.menu.LevelSelect.listMaps;
 
 public class Game extends Canvas {
 
@@ -261,13 +266,45 @@ public class Game extends Canvas {
 	public void togglePause2(){
 		paused = !paused;
 	}
-	
+
+
+	/**
+	 * @deprecated use Log.log
+	 * @param type
+	 * @param message
+	 */
 	public static void information(int type, String message){
         Log.log(type, message);
 	}
 
+	private static void addDemoMaps() {
+		if(listMaps(Level.mapfolder).length == 0){
+			try{
+				URL inputUrl;
+				File dest;
+
+				String[] demoMaps = {"Demo-map", "Franzjump", "Franzmaze"};
+
+				for(String map: demoMaps) {
+					inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".txt");
+					dest = new File(Level.mapfolder + File.separator + map + ".txt");
+					FileUtils.copyURLToFile(inputUrl, dest);
+					inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".desc.txt");
+					if(inputUrl != null) {
+						dest = new File(Level.mapfolder+ File.separator + map +" .desc.txt");
+						FileUtils.copyURLToFile(inputUrl, dest);
+					}
+				}
+
+			}catch(Exception e){
+				Game.information(2,e.toString());
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 	    //System.setProperty("sun.java2d.xrender","True");
+		addDemoMaps();
         game = new Game();
 		game.start();
 	}

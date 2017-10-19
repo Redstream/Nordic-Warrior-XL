@@ -39,22 +39,7 @@ public class LevelSelect extends JPanel {
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(30);
-		
-		if(maps.length == 0){
-			try{
-				URL inputUrl;
-				File dest;
-				
-				inputUrl = getClass().getResource("/res/maps/Demo-map.txt");
-				dest = new File(Level.mapfolder+ File.separator + "Demo-map.txt");
-				FileUtils.copyURLToFile(inputUrl, dest);
-				inputUrl = getClass().getResource("/res/maps/Demo-map.desc.txt");
-				dest = new File(Level.mapfolder+ File.separator + "Demo-map.desc.txt");
-				FileUtils.copyURLToFile(inputUrl, dest);
-			}catch(Exception ex){
-				Game.information(2,ex.toString());
-			}
-		}
+
 		JScrollPane jscrollpane = new JScrollPane(list);
 		jscrollpane.setLocation(0, 0);
 		add(jscrollpane);
