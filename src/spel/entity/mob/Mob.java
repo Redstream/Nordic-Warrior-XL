@@ -16,28 +16,22 @@ import spel.level.Level;
 public abstract class Mob extends Entity {
 
 	public double xv = 0, yv = 0;
-	public int hitboxWidth, hitboxHeight;
-	public Animation animation;
-	protected Animation[] animations;
+	protected int hitboxWidth, hitboxHeight;
+	protected Animation animation;
+	Animation[] animations;
 	public int dir = 1;
 	protected int health;
 	public boolean onGround = false;
 	protected boolean godmode = false;
 	public boolean moving = false;
-	public long createTime = 0;
 	protected long graceTime = 0;
-	protected long freezetimer = 0;
-	protected int damage = 0;
+	private long freezetimer = 0;
+	int damage = 0;
 
-	protected List<Projectile> projectiles = new ArrayList<Projectile>();
-
-	protected void init() {
-		createTime = System.currentTimeMillis();
-	}
+	protected List<Projectile> projectiles = new ArrayList<>();
 
 	public void render(Screen screen) {
-	    if(!isRemoved())
-		    screen.renderSprite(animation.getSprite(), (int) x - level.xOffset, Game.HEIGHT - (int) y + level.yOffset - 70, dir);
+		screen.renderSprite(animation.getSprite(), (int) x - level.xOffset, Game.HEIGHT - (int) y + level.yOffset - 70, dir);
 	}
 
 	public void update() {
@@ -78,7 +72,7 @@ public abstract class Mob extends Entity {
 		
 	}
 
-	public boolean move(double xv, double yv) {
+	protected boolean move(double xv, double yv) {
 		boolean collision = false;
 		if (xv > 0) {
 			dir = 1;
@@ -123,7 +117,7 @@ public abstract class Mob extends Entity {
 	}
 
 	protected boolean collision(int x, int y) {
-		if (y < -hitboxHeight) {
+		if (y < -1) {
 			kill();
 		}
 		if (x + hitboxWidth < 0) {
@@ -137,7 +131,7 @@ public abstract class Mob extends Entity {
 		return tileCollision(x, y);
 	}
 
-	protected boolean tileCollision(int x, int y) {
+	private boolean tileCollision(int x, int y) {
 		for (int yc = 0; yc < hitboxHeight; yc += 10) {
 			for (int xc = 0; xc < hitboxWidth; xc += 10) {
 				if (yc > hitboxHeight) yc = hitboxHeight;
@@ -180,25 +174,11 @@ public abstract class Mob extends Entity {
 		return (int) y;
 	}
 
-	public void setX(int x) {
-		if (x < 0) {
-			this.x = 0;
-		} else if (x >= level.width * Level.tileSize) {
-			this.x = (level.width - 1) * Level.tileSize;
-		} else {
-			this.x = x;
-		}
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
 	public void setHp(int hp) {
 	    health = hp;
     }
 
-	public boolean isProtected() {
+	protected boolean isProtected() {
 		return graceTime > level.time;
 	}
 
@@ -207,7 +187,7 @@ public abstract class Mob extends Entity {
 		this.hitboxHeight = height;
 	}
 
-	public boolean setAnimation(Animation anim, int time) {
+	protected boolean setAnimation(Animation anim, int time) {
 		if (!animation.locked && animation != anim) {
 			animation = anim;
 			animation.start(time);
@@ -220,8 +200,11 @@ public abstract class Mob extends Entity {
 		if (animation == null) return Sprite.err;
 		return animation.getSprite();
 	}
-	
-	public void projectileClear() {
+
+	/**
+	 * Remove the expired & collided projectiles
+	 */
+	private void projectileClear() {
 		for (int i = 0; i < projectiles.size(); i++) {
 			if (projectiles.get(i).isRemoved()) {
 				projectiles.remove(i);
@@ -230,11 +213,6 @@ public abstract class Mob extends Entity {
 	}
 
 	public Mob clone() {
-	    try {
-	        return (Mob) super.clone();
-        } catch(Exception e){
-	        return null;
-        }
-    }
-
+		return (Mob) super.clone();
+	}
 }

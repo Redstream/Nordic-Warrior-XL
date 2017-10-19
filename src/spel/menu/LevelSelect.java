@@ -7,34 +7,28 @@ import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.URL;
 import java.util.ArrayList;
-
 import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-
-import org.apache.commons.io.FileUtils;
-
 import spel.Game;
 import spel.level.Level;
 
 public class LevelSelect extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	final JList<String> list;
+	private final JList<String> list;
 	
-	JEditorPane textarea;
-	String[] info = new String[100];
-	final Menu parent;
+	private final JEditorPane textarea;
+	private final Menu parent;
 
-	public LevelSelect(final Menu parent)  {
+	LevelSelect(final Menu parent)  {
 		this.parent = parent;
 		System.out.println(Level.mapfolder);
 		String[] maps = listMaps(Level.mapfolder);
-		list = new JList<String>(maps);
+		list = new JList<>(maps);
 		list.setSize(list.getWidth(), 100);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -70,7 +64,7 @@ public class LevelSelect extends JPanel {
 					}
 					lastclicked = list.getSelectedValue();
 				} else {
-					setLevel(list.getSelectedValue() + ".txt", false);
+					setLevel(list.getSelectedValue() + ".txt");
 				}
 			}
 		};
@@ -78,9 +72,9 @@ public class LevelSelect extends JPanel {
 
 	}
 	
-	public void setLevel(String level, boolean jar){
+	public void setLevel(String level){
 		parent.changeCard("1");
-		Game.game.setLevel(level, jar);		
+		Game.game.setLevel(level);
 		Game.game.togglePause();	
 	}
 

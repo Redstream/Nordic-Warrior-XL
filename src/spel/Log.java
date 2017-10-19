@@ -2,22 +2,24 @@ package spel;
 
 public class Log {
 
-    private final static int information = 0;
-
+    public static final int INFORMATION = 0;
+    public static final int WARNING = 1;
+    public static final int SEVERE = 2;
+    private static final int filter = 0;
 
     public static void log(int type, String message){
         String typeText = "";
         switch(type){
-            case 0:
-                if(information > 0) return;
+            case INFORMATION:
+                if(filter > 0) return;
                 typeText = "[INFORMATION] ";
                 break;
-            case 1:
-                if(information > 1) return;
+            case WARNING:
+                if(filter > 1) return;
                 typeText = "[WARNING] ";
                 break;
-            case 2:
-                if(information > 2) return;
+            case SEVERE:
+                if(filter > 2) return;
                 typeText = "[SEVERE] ";
                 break;
         }

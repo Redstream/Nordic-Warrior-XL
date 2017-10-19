@@ -19,7 +19,7 @@ public class Player extends Mob {
 	private Animation animations[] = new Animation [4];
 	private long axeTimer;
 	public Rectangle hitBox;
-	public final int xOrigin, yOrigin;
+	public int xOrigin, yOrigin;
 	
 	public Player(int x, int y){
 		this.x = xOrigin = x;
@@ -36,7 +36,6 @@ public class Player extends Mob {
 	}
 	
 	public void init(){
-		super.init();
 		animations[1] = new Animation(SpriteSheet.player, 36, 72, 4, 0); //Move
 		animations[0] = new Animation(SpriteSheet.player, 36, 72, 5, 12); //Stance
 		animations[2] = new Animation(SpriteSheet.player, 108, 72, 2, 8); //AxeThrow
@@ -80,12 +79,8 @@ public class Player extends Mob {
 	}
 
 	public Sprite getSprite() {
-		Sprite sprite = animation.getSprite();	
-		if(isProtected()){
-			sprite.red = 70;
-		}else{
-			sprite.red = 0;
-		}
+		Sprite sprite = animation.getSprite();
+		sprite.red = isProtected() ? 70 : 0;
 		return sprite;
 	}
 
@@ -95,22 +90,18 @@ public class Player extends Mob {
 			if(!animation.locked) {
 				level.resetLevel();
 			}
-			move(0,yv);
+			move(0,0);
 			return;
 		}
 		if(key == null)	return;
 		hitBox.setLocation((int)x, (int)y);
 		if (key.left ^ key.right) {
-			if (key.left) {
-				dir = -1;
-			} else {
-				dir = 1;
-			}
+			dir = key.left ? -1 : 1;
 			xv = 4 * dir;
 			moving = true;
 			setAnimation(animations[1],150);
 		} else {
-			xv = 0.0;
+			xv = 0.0; //Deceleration? ,(Math.abs(xv) < 0.5 ? 0.0 : xv * 0.9);
 			setAnimation(animations[0],150);
 		}
 		if (key.restart) {
@@ -135,7 +126,6 @@ public class Player extends Mob {
 	public void kill() {
 		if (godmode || dead) return;
 		dead = true;
-		
 		animation = animations[3];
 		animation.start(150);
 	}

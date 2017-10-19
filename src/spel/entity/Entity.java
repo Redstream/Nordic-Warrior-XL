@@ -2,6 +2,7 @@ package spel.entity;
 
 import java.awt.Rectangle;
 
+import spel.Log;
 import spel.entity.mob.Mob;
 import spel.graphics.Screen;
 import spel.graphics.Sprite;
@@ -12,11 +13,9 @@ public abstract class  Entity implements Cloneable{
 	protected boolean removed = false;
 	protected Sprite sprite;
 	protected Level level;
-	public double x = 0, y = 0;
-	public int hitboxWidth = 0, hitboxHeight = 0;
+	public double x, y;
+	public int width, height;
 	public boolean dead = false;
-
-	public void attackThis(Mob attacker, int damage, int knockback, int freezems) {}
 
 	public abstract void update();
 
@@ -58,7 +57,20 @@ public abstract class  Entity implements Cloneable{
 		return (int) y;
 	}
 
-	public Entity clone() throws CloneNotSupportedException{
-	    return (Entity) super.clone();
+	public void setX(int x) {
+		this.x = Math.max(0, Math.min(x, (level.width - 1) * Level.tileSize));
+	}
+
+	public void setY(int y) {
+		this.y = Math.max(0, Math.min(y, (level.height - 1) * Level.tileSize));
+	}
+
+	public Entity clone() {
+		try {
+			return (Mob) super.clone();
+		} catch(CloneNotSupportedException e){
+			Log.log(Log.WARNING, "Could not clone Mob");
+			return null;
+		}
     }
 }

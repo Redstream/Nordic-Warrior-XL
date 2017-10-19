@@ -26,6 +26,7 @@ public class Tile {
 			
 		}
 	};
+
 	public static Tile stone2 = new Tile(new Sprite(SpriteSheet.sheet36, 1, 4, 36, 36));
 	public static Tile tree = new Tile(new Sprite(SpriteSheet.sheet36, 4, 0, 180, 252),false,false);
 	public static Tile face1 = new Tile(new Sprite(SpriteSheet.sheet36, 2, 1, 72, 72), false, false);
@@ -49,9 +50,7 @@ public class Tile {
 	protected boolean breakable;
 	protected Sprite sprite;
 
-	public Tile() {
-
-	}
+	public Tile() {}
 
 	public Tile(Sprite sprite) {
 		initSprite(sprite);

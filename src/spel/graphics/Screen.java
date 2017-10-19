@@ -4,7 +4,7 @@ import spel.graphics.Tile.Tile;
 
 public class Screen {
 
-    public static final int TRANSPARENT_COLOR = 0xffff00ff;
+    private static final int TRANSPARENT_COLOR = 0xffff00ff;
 	public int pixels[];
 	private int height, width;
 

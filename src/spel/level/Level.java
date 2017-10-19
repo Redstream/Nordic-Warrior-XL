@@ -18,38 +18,39 @@ public class Level extends BasicLevel {
 	public static File mapfolder = new File(System.getProperty("user.home") + File.separator + Game.NAME + File.separator + "maps");
 	public static final int tileSize = 36;
 
-
 	public long start = 0;
 	public long time = 0;
 	public int shake = 0;
 	public Rectangle finnish = new Rectangle(-100,-100,72,72);
 	public boolean won = false;
-	public long finnishTime = 0;
-	
-	public Level() {
-		
-	}
-	// anv�nds n�r man ska ladda in en map som finns fr�n en fil.
+	private long finnishTime = 0;
+
+	/**
+	 * Load level from path
+	 * @param path
+	 */
 	public Level(String path) {
 		loadLevel(path);
 		init();
 	}
-	
 
-	//anv�nds n�r man skapar en ny v�rld. Oftast av mapmakern.
+	/**
+	 * Used by the Mapmaker
+	 * @param width
+	 * @param height
+	 */
 	public Level(int width, int height) {
 		this.width = width;
 		this.height = height;
 		tiles = new int[width * height];
 		init();
 	}
-	
-	
+
 	public void init() {
 		super.init();
 		start = System.currentTimeMillis();
 	}
-	
+
 	public void update() {
         super.update();
 		if(Entity.intersect(finnish, player.hitBox)) {
@@ -67,11 +68,11 @@ public class Level extends BasicLevel {
 		}
 		time = System.currentTimeMillis()-start;
 	}
-	
-	public void add(Mob e){
-		mobs.add(e);
-	}
-	
+
+	/**
+	 * Todo: split & redo method
+	 * @param path
+	 */
 	private void loadLevel(String path) {
 		try {	
 			BufferedReader br = new BufferedReader(new FileReader(mapfolder + File.separator + path));
@@ -98,7 +99,7 @@ public class Level extends BasicLevel {
 					tiles[i] = Integer.parseInt(s.split(",")[i]);
 				}
 				
-				try{
+				try {
 					s = br.readLine();
 					String[] mobs = s.split(";");
 
@@ -107,7 +108,7 @@ public class Level extends BasicLevel {
 						int x = Integer.parseInt(mobs[i].split(",")[1]);
 						int y = Integer.parseInt(mobs[i].split(",")[2]);
 						Mob mob = getMob(Integer.parseInt(mobs[i].split(",")[0]), x,y);
-						add(mob.clone());
+						this.mobs.add(mob.clone());
 						originMobs.add(mob);
 					}
 
@@ -153,6 +154,11 @@ public class Level extends BasicLevel {
 		} catch (Exception e) {
 			Game.information(2,"Map file not found.");
 		}
+	}
+
+	public void setCheckPoint() {
+		player.xOrigin = (int)player.x;
+		player.yOrigin = (int)player.y;
 	}
 
 }

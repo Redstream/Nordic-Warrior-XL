@@ -8,7 +8,7 @@ import spel.graphics.Animation;
 import spel.graphics.SpriteSheet;
 import spel.level.Level;
 
-public class Goblin extends Mob{
+public class Goblin extends Mob {
 	public int blastRadius = 100;
 	public long destructTime = 2000;
 	public long explodedTime = 0;

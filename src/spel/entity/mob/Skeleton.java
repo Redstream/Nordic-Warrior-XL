@@ -20,7 +20,6 @@ public class Skeleton extends Mob{
 	}
 	
 	public void init(){
-		super.init();
 		animation = new Animation(SpriteSheet.skeleton, 36, 72, 4, 0);
 		animation.start(200);
 		health = 100;

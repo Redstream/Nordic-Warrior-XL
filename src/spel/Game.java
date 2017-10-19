@@ -36,7 +36,7 @@ public class Game extends Canvas {
 	public final static int HEIGHT = WIDTH * 9 / 16;
 	private final static float scale = 2f;
 	private static Dimension screenSize = new Dimension((int)(WIDTH*scale),(int)(WIDTH*scale*9/16));
-	private final static boolean FULLSCREEN = true;
+	private final static boolean FULLSCREEN = false;
 	public static Random random = new Random();
 
 	private BufferedImage image;
@@ -55,13 +55,17 @@ public class Game extends Canvas {
 	private CardLayout cl;
 	private Menu menu;
 
+	/**
+	 * Construct
+	 */
 	public Game() {
 		setSize();
 		init();
 	}
-	
 
-	// hittar sk�rmens storlek och st�ller in rutans storlek d�refter.
+	/**
+	 * Find screen and set size
+	 */
 	private void setSize() {
 		screen = new Screen(WIDTH,HEIGHT);
 		frame = new JFrame("Loading");
@@ -104,7 +108,9 @@ public class Game extends Canvas {
 		}
 	}
 
-	// Initierar variabler och st�ller in framen.
+	/**
+	 * Init frame
+	 */
 	private void init() {
 		key = new Keyboard(this);
 		cl = new CardLayout();
@@ -126,25 +132,32 @@ public class Game extends Canvas {
 		frame.setLocationRelativeTo(null);
 	}
 
-	public void setLevel(String path, boolean jar) {
+	/**
+	 * Set the game level
+	 * @param path to level
+	 */
+	public void setLevel(String path) {
+		System.out.println(path);
 		level = new Level(path);
 		level.player.key = key;
 	}
 
-
-	// updaterar knapptryckningar, gubbar och all mekanik.
+	/**
+	 * Updated game physics, keyboards etc..
+	 */
 	public synchronized void update() {
 		key.update();
 		if (!paused)
 			level.update();
-
 	}
 
 	private DecimalFormat df = new DecimalFormat("#.###");
 
-	// grafik metod. Ritar i princip ut allt som man kan se p� sk�rmen.
+	/**
+	 * Graphics
+	 */
 	private synchronized void render() {
-		// Skapar en bufferstrategy d�r man g�r redo 2 bilder innan man ritar
+		// Skapar en bufferstrategy d�r man g�r redo 3 bilder innan man ritar
 		// ut dom.
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -153,25 +166,23 @@ public class Game extends Canvas {
 		}
 
 		if (!paused) {
-			level.renderAll(screen);
+			level.render(screen);
 			System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 		}
 
-		// printar ut bilden som allt �r ritat p�.
+		// Print the image
 		Graphics g = bs.getDrawGraphics();
 
-		// jordb�vnings effekt
-
-		if (level.shake > 0) {;
+		// Earthshake effect
+		if (level.shake > 0) {
 			Random r = new Random();
-			//int rand = r.nextInt(level.shake) - level.shake / 2;
 			g.drawImage(image,  r.nextInt(level.shake) - level.shake / 2, r.nextInt(level.shake) - level.shake / 2
 					, getWidth() + r.nextInt(level.shake) - level.shake / 2, getHeight() + r.nextInt(level.shake) - level.shake / 2, null);
 		} else {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}
 		
-		if(level.won){
+		if(level.won) {
 			g.setFont(new Font("Verdana", Font.PLAIN, 20));
 			g.drawString("Level completed!", getWidth()/2, getHeight()/2);
 		}
@@ -190,35 +201,35 @@ public class Game extends Canvas {
 				}
 			}
 		}
+
 		g.dispose();
 		bs.show();
 	}
 
-	double ns = 1000000000.0 / 60.0;
 
-	// game-loopen
-	public void run() {
+	/**
+	 * Game-loop
+	 */
+	private void run() {
+		double ns = 1000000000.0 / 60.0;
 		long lastTime = System.nanoTime();
 		long second = System.nanoTime();
-		long now = lastTime;
+		long now;
 		double delta = 0;
 		int frames = 0;
 		int updates = 0;
-		boolean updated = true;
-		boolean framelock = false;
+		boolean updated = false;
+		boolean framelock = true;
 
 		while (running) {
-			now = System.nanoTime();
-			if (level != null) {
-				delta += ((now - lastTime) / ns) * level.speed;
-			} else {
-				delta += (now - lastTime) / ns;
-			}
+			// Reduce the cpu usage. Can we do this differently?
+			try { Thread.sleep(2); } catch (Exception e) {}
 
+			now = System.nanoTime();
+			delta += ((now - lastTime) / ns) * (level != null ? level.speed : 1);
 			lastTime = now;
 
-			// updaterar game mechanics. k�r loopen f�r varje 1/64.0 s som
-			// den inte har uppdaterats.
+			// Update game
 			while (delta >= 1) {
 				delta--;
 				update();
@@ -226,14 +237,14 @@ public class Game extends Canvas {
 				updated = true;
 			}
 
-
+			// Render Game
 			if (!paused && (updated || !framelock)) {
 				render();
 				frames++;
 				updated = false;
 			}
 			
-			// updaterar fps och ups statsen en g�ng per sekund.
+			// Update the fps and ups stats once very second
 			if (now - second >= 1000000000) {
 				second = now;
 				this.frames = frames;
@@ -244,7 +255,9 @@ public class Game extends Canvas {
 		}
 	}
 
-	// startar game-loopen
+	/**
+	 * Start game if not running
+	 */
 	public void start() {
 		if (running) return;
 		running = true;
@@ -270,13 +283,15 @@ public class Game extends Canvas {
 
 	/**
 	 * @deprecated use Log.log
-	 * @param type
-	 * @param message
 	 */
 	public static void information(int type, String message){
         Log.log(type, message);
 	}
 
+	/**
+	 * Add all demo maps.
+	 * Used to make sure player has at least a few maps.
+	 */
 	private static void addDemoMaps() {
 		if(listMaps(Level.mapfolder).length == 0){
 			try{
@@ -302,11 +317,13 @@ public class Game extends Canvas {
 		}
 	}
 
+	/**
+	 * @param args ignored
+	 */
 	public static void main(String[] args) {
-	    //System.setProperty("sun.java2d.xrender","True");
+		//System.setProperty("sun.java2d.opengl","True");
 		addDemoMaps();
         game = new Game();
 		game.start();
 	}
-
 }
