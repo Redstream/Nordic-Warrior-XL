@@ -3,6 +3,8 @@ package spel.graphics;
 import spel.graphics.Tile.Tile;
 
 public class Screen {
+
+    public static final int TRANSPARENT_COLOR = 0xffff00ff;
 	public int pixels[];
 	private int height, width;
 
@@ -10,10 +12,6 @@ public class Screen {
 		pixels = new int[width * height];
 		this.height = height;
 		this.width = width;
-	}
-
-	public void clear() {
-		clear(0x000000);
 	}
 
 	public void clear(int color) {
@@ -63,7 +61,7 @@ public class Screen {
 				color = tile.getSprite().pixels[x + y * tile.getSprite().width];
 				if ((xa + x) + (ya + y) * width > pixels.length) continue;
 				if (x + y * tile.getSprite().width > tile.getSprite().pixels.length) continue;
-				if (color != 0xffff00ff) {
+				if (color != TRANSPARENT_COLOR) {
 					pixels[(xa + x) + (ya + y) * width] = tile.getSprite().pixels[x + y * tile.getSprite().width];
 				}
 			}

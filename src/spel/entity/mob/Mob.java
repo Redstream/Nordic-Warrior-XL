@@ -24,36 +24,28 @@ public abstract class Mob extends Entity {
 	public boolean onGround = false;
 	protected boolean godmode = false;
 	public boolean moving = false;
-	public long createTime= 0;
+	public long createTime = 0;
 	protected long graceTime = 0;
 	protected long freezetimer = 0;
 	protected int damage = 0;
 
 	protected List<Projectile> projectiles = new ArrayList<Projectile>();
 
-	public Mob() {
-
-	}
-
-	public Mob(Level level) {
-		this.level = level;
-		init();
-	}
-
 	protected void init() {
 		createTime = System.currentTimeMillis();
 	}
 
 	public void render(Screen screen) {
-		screen.renderSprite(animation.getSprite(), (int) x - level.xOffset, Game.HEIGHT - (int) y + level.yOffset - 70, dir);
+	    if(!isRemoved())
+		    screen.renderSprite(animation.getSprite(), (int) x - level.xOffset, Game.HEIGHT - (int) y + level.yOffset - 70, dir);
 	}
 
 	public void update() {
-		for(Projectile p: projectiles){
+		for(Projectile p: projectiles) {
 			p.update();
 			int xp = p.getX()+p.getSprite().width/2;
 			int yp = p.getY()+32;
-			for(Mob m: level.entitys){
+			for(Mob m: level.mobs){
 				if(xp >= m.getX() && xp <= m.getX()+m.hitboxWidth){
 					if(yp >= m.getY() && yp <= m.getY()+m.hitboxHeight){
 						if(!m.dead){
@@ -158,9 +150,6 @@ public abstract class Mob extends Entity {
 		return false;
 	}
 
-	public void kill() {
-	}
-
 	public void push(int units) {
 		if (!collision((int) (x + units), (int) y)) {
 			x += units;
@@ -172,12 +161,6 @@ public abstract class Mob extends Entity {
 			} else {
 				return;
 			}
-		}
-	}
-
-	public void freeze(int ms) {
-		if (level.time + ms > freezetimer) {
-			freezetimer = level.time + ms;
 		}
 	}
 
@@ -211,6 +194,10 @@ public abstract class Mob extends Entity {
 		this.y = y;
 	}
 
+	public void setHp(int hp) {
+	    health = hp;
+    }
+
 	public boolean isProtected() {
 		return graceTime > level.time;
 	}
@@ -241,5 +228,13 @@ public abstract class Mob extends Entity {
 			}
 		}
 	}
+
+	public Mob clone() {
+	    try {
+	        return (Mob) super.clone();
+        } catch(Exception e){
+	        return null;
+        }
+    }
 
 }

@@ -15,10 +15,10 @@ import spel.entity.mob.player.Player;
 
 public class Level extends BasicLevel {
 	
-	public static File mapfolder = new File(System.getProperty("user.home") + "\\" + Game.NAME + "\\maps");
+	public static File mapfolder = new File(System.getProperty("user.home") + File.separator + Game.NAME + File.separator + "maps");
 	public static final int tileSize = 36;
-	
-	
+
+
 	public long start = 0;
 	public long time = 0;
 	public int shake = 0;
@@ -26,17 +26,17 @@ public class Level extends BasicLevel {
 	public boolean won = false;
 	public long finnishTime = 0;
 	
-	public Level(){
+	public Level() {
 		
 	}
-	// används när man ska ladda in en map som finns från en fil.
+	// anvï¿½nds nï¿½r man ska ladda in en map som finns frï¿½n en fil.
 	public Level(String path) {
 		loadLevel(path);
 		init();
 	}
 	
 
-	//används när man skapar en ny värld. Oftast av mapmakern.
+	//anvï¿½nds nï¿½r man skapar en ny vï¿½rld. Oftast av mapmakern.
 	public Level(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -45,49 +45,36 @@ public class Level extends BasicLevel {
 	}
 	
 	
-	public void init(){
+	public void init() {
 		super.init();
 		start = System.currentTimeMillis();
 	}
-
-	public void setGravity(double d) {
-		gravity = d;
-	}
-
-	public void setSpeed(double d) {
-		speed = d;
-	}
 	
-	public void update(){
-		if(Entity.intersect(finnish, player.hitBox)){
+	public void update() {
+        super.update();
+		if(Entity.intersect(finnish, player.hitBox)) {
 			won = true;
 		}
-		//System.out.println(finnishTime + "\n"+ time);
-		if(won){
+
+		if(won) {
 			if(finnishTime == 0){
 				finnishTime = time + 3000;
-			}else{
-				if(finnishTime < time){
+			} else {
+				if(finnishTime < time) {
 					Game.game.togglePause();
 				}
 			}
 		}
-		super.update();
 		time = System.currentTimeMillis()-start;
-		
 	}
 	
 	public void add(Mob e){
-		entitys.add(e);
-	}
-	
-	public void remove(Entity e){
-		entitys.remove(e);
+		mobs.add(e);
 	}
 	
 	private void loadLevel(String path) {
 		try {	
-			BufferedReader br = new BufferedReader(new FileReader(mapfolder + "\\" + path));
+			BufferedReader br = new BufferedReader(new FileReader(mapfolder + File.separator + path));
 			try {
 				String s = br.readLine();
 				width = Integer.parseInt(s.split(",")[0]);
@@ -114,19 +101,20 @@ public class Level extends BasicLevel {
 				try{
 					s = br.readLine();
 					String[] mobs = s.split(";");
+
 					for(int i = 0; i < mobs.length;i++){
 						if(mobs.length < 2) break;
 						int x = Integer.parseInt(mobs[i].split(",")[1]);
 						int y = Integer.parseInt(mobs[i].split(",")[2]);
 						Mob mob = getMob(Integer.parseInt(mobs[i].split(",")[0]), x,y);
-						add(mob);
+						add(mob.clone());
+						originMobs.add(mob);
 					}
-				}catch(Exception e){
+
+				} catch(Exception e) {
 					Game.information(1, "Error loading mobs" + e.toString());
 				}
-				
-				
-				
+
 				try{
 					s = br.readLine();
 					if(Game.game != null){
@@ -134,7 +122,7 @@ public class Level extends BasicLevel {
 					}else{
 						player = new Player(Integer.parseInt(s.split(",")[0]),Integer.parseInt(s.split(",")[1]));
 					}
-				}catch(Exception e){
+				} catch(Exception e) {
 					if(Game.game != null){
 						player = new Player(Game.game.key,this,36,36);
 					}else{
@@ -153,7 +141,7 @@ public class Level extends BasicLevel {
 					rw = Integer.parseInt(s.split(",")[2]);
 					rh = Integer.parseInt(s.split(",")[3]);
 					finnish = new Rectangle(rx, ry, rw, rh);
-				}catch(Exception e){
+				} catch(Exception e) {
 					Game.information(2,"Error loading level finnish"+  e.toString());
 				}
 				

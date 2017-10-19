@@ -19,7 +19,7 @@ public class Player extends Mob {
 	private Animation animations[] = new Animation [4];
 	private long axeTimer;
 	public Rectangle hitBox;
-	public int xOrigin, yOrigin;
+	public final int xOrigin, yOrigin;
 	
 	public Player(int x, int y){
 		this.x = xOrigin = x;
@@ -90,15 +90,12 @@ public class Player extends Mob {
 	}
 
 	public void update() {
+        super.update();
 		if(dead){
-			if(!animation.locked){
-				x = xOrigin;
-				y = yOrigin;
-				dead = false;
-				health = 30;
+			if(!animation.locked) {
+				level.resetLevel();
 			}
 			move(0,yv);
-			super.update();
 			return;
 		}
 		if(key == null)	return;
@@ -106,7 +103,7 @@ public class Player extends Mob {
 		if (key.left ^ key.right) {
 			if (key.left) {
 				dir = -1;
-			} else if (key.right) {
+			} else {
 				dir = 1;
 			}
 			xv = 4 * dir;
@@ -117,9 +114,7 @@ public class Player extends Mob {
 			setAnimation(animations[0],150);
 		}
 		if (key.restart) {
-			setX(72);
-			setY(36);
-			yv = 0;
+            this.level.resetLevel();
 		}
 		if (key.jump && onGround || (godmode && key.jump)) {
 			yv = 8;
@@ -135,8 +130,6 @@ public class Player extends Mob {
 			throwAxe();	
 			setAnimation(animations[2],200);
 		}
-
-		super.update();
 	}
 	
 	public void kill() {

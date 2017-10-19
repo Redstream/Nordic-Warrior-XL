@@ -22,19 +22,16 @@ import spel.input.Keyboard;
 import spel.level.Level;
 import spel.menu.Menu;
 
-public class Game extends Canvas implements Runnable {
-
-	private static final long serialVersionUID = 1L;
+public class Game extends Canvas {
 
 	public static Game game;
-	public static final String NAME = "Nordic-Warrior-XL";
-	private static int stats = 0;
-	private static int information = 0;
-	public static int WIDTH = 700;
-	public static int HEIGHT = WIDTH * 9 / 16;
-	private static float scale = 2f;
+	public final static  String NAME = "Nordic-Warrior-XL";
+	private final static int stats = 2;
+	public final static int WIDTH = 700;
+	public final static int HEIGHT = WIDTH * 9 / 16;
+	private final static float scale = 2f;
 	private static Dimension screenSize = new Dimension((int)(WIDTH*scale),(int)(WIDTH*scale*9/16));
-	private static boolean FULLSCREEN = false;
+	private final static boolean FULLSCREEN = true;
 	public static Random random = new Random();
 
 	private BufferedImage image;
@@ -43,7 +40,6 @@ public class Game extends Canvas implements Runnable {
 	private int frames;
 	private int updates;
 
-	private Thread thread;
 	private boolean running = false;
 	private boolean paused = true;
 
@@ -60,7 +56,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 
-	// hittar skärmens storlek och ställer in rutans storlek därefter.
+	// hittar skï¿½rmens storlek och stï¿½ller in rutans storlek dï¿½refter.
 	private void setSize() {
 		screen = new Screen(WIDTH,HEIGHT);
 		frame = new JFrame("Loading");
@@ -82,10 +78,10 @@ public class Game extends Canvas implements Runnable {
 			public void componentHidden(ComponentEvent e) {}
 		});
 
-		// image är bilden som man ändrar och printar ut hela tiden.
-		// pixels är direktkopplade till images pixlar. Ändrar du värdet på
-		// något i pixels ändras det också i image.
-		// Formatet är hexadeximal färgkodning(0-255) Ex: 0xffffff, 0x11aa22,
+		// image ï¿½r bilden som man ï¿½ndrar och printar ut hela tiden.
+		// pixels ï¿½r direktkopplade till images pixlar. ï¿½ndrar du vï¿½rdet pï¿½
+		// nï¿½got i pixels ï¿½ndras det ocksï¿½ i image.
+		// Formatet ï¿½r hexadeximal fï¿½rgkodning(0-255) Ex: 0xffffff, 0x11aa22,
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		
@@ -103,9 +99,9 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 
-	// Initierar variabler och ställer in framen.
+	// Initierar variabler och stï¿½ller in framen.
 	private void init() {
-		key = new Keyboard();
+		key = new Keyboard(this);
 		cl = new CardLayout();
 		frame.setLayout(cl);
 
@@ -132,18 +128,18 @@ public class Game extends Canvas implements Runnable {
 
 
 	// updaterar knapptryckningar, gubbar och all mekanik.
-	public void update() {
+	public synchronized void update() {
 		key.update();
-		if (!paused) {
+		if (!paused)
 			level.update();
-		}
+
 	}
 
-	DecimalFormat df = new DecimalFormat("#.###");
+	private DecimalFormat df = new DecimalFormat("#.###");
 
-	// grafik metod. Ritar i princip ut allt som man kan se på skärmen.
-	private void render() {
-		// Skapar en bufferstrategy där man gör redo 2 bilder innan man ritar
+	// grafik metod. Ritar i princip ut allt som man kan se pï¿½ skï¿½rmen.
+	private synchronized void render() {
+		// Skapar en bufferstrategy dï¿½r man gï¿½r redo 2 bilder innan man ritar
 		// ut dom.
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -156,10 +152,10 @@ public class Game extends Canvas implements Runnable {
 			System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 		}
 
-		// printar ut bilden som allt är ritat på.
+		// printar ut bilden som allt ï¿½r ritat pï¿½.
 		Graphics g = bs.getDrawGraphics();
 
-		// jordbävnings effekt
+		// jordbï¿½vnings effekt
 
 		if (level.shake > 0) {;
 			Random r = new Random();
@@ -204,7 +200,7 @@ public class Game extends Canvas implements Runnable {
 		int frames = 0;
 		int updates = 0;
 		boolean updated = true;
-		boolean framelock = true;
+		boolean framelock = false;
 
 		while (running) {
 			now = System.nanoTime();
@@ -216,7 +212,7 @@ public class Game extends Canvas implements Runnable {
 
 			lastTime = now;
 
-			// updaterar game mechanics. kör loopen för varje 1/64.0 s som
+			// updaterar game mechanics. kï¿½r loopen fï¿½r varje 1/64.0 s som
 			// den inte har uppdaterats.
 			while (delta >= 1) {
 				delta--;
@@ -232,7 +228,7 @@ public class Game extends Canvas implements Runnable {
 				updated = false;
 			}
 			
-			// updaterar fps och ups statsen en gång per sekund.
+			// updaterar fps och ups statsen en gï¿½ng per sekund.
 			if (now - second >= 1000000000) {
 				second = now;
 				this.frames = frames;
@@ -247,19 +243,8 @@ public class Game extends Canvas implements Runnable {
 	public void start() {
 		if (running) return;
 		running = true;
-		thread = new Thread(this);
 		requestFocus();
-		thread.start();
-	}
-
-	// stänger av spelet
-	public void stop() {
-		if (!running) return;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		run();
 	}
 
 	public void togglePause() {
@@ -276,32 +261,14 @@ public class Game extends Canvas implements Runnable {
 	public void togglePause2(){
 		paused = !paused;
 	}
-
-	public void setPanel(String index) {
-		cl.show(frame.getContentPane(), index);
-	}
 	
 	public static void information(int type, String message){
-		String typeText = "";
-		switch(type){
-		case 0:
-			if(information > 0) return;
-			typeText = "[INFORMATION] ";
-			break;
-		case 1:
-			if(information > 1) return;
-			typeText = "[WARNING] ";
-			break;
-		case 2:
-			if(information > 2) return;
-			typeText = "[SEVERE] ";
-			break;
-		}
-		System.out.println(typeText + message);
+        Log.log(type, message);
 	}
 
 	public static void main(String[] args) {
-		game = new Game();
+	    //System.setProperty("sun.java2d.xrender","True");
+        game = new Game();
 		game.start();
 	}
 

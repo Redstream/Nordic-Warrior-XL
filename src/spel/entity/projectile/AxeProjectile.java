@@ -16,7 +16,7 @@ public class AxeProjectile extends Projectile {
 		init();
 	}
 	
-	public void init(){
+	public void init() {
 		super.init();
 		anim = new Animation(SpriteSheet.player, 36, 72, 8, 10);
 		anim.setTime(30);

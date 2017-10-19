@@ -1,10 +1,11 @@
 package spel.level;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 
 import spel.Game;
-import spel.entity.Entity;
 import spel.entity.mob.Boss;
 import spel.entity.mob.Goblin;
 import spel.entity.mob.Mob;
@@ -15,7 +16,7 @@ import spel.graphics.Tile.Tile;
 
 public abstract class  BasicLevel {
 	
-	public static final int tileSize = 36;
+	protected static final int tileSize = 36;
 	public  int xOffset, yOffset;
 	
 	public double gravity = 0.4;
@@ -24,68 +25,61 @@ public abstract class  BasicLevel {
 	public Player player;
 	public int width, height;
 	public int[] tiles;
-	public List<Mob> entitys = new ArrayList<Mob>();
-	
+	public List<Mob> mobs = new ArrayList<>();
+	protected List<Mob> originMobs = new ArrayList<>();
 
-	public BasicLevel() {
-		
-	}
-	
+    public void init() {
+        offset = (int)(-36*height + 393);
+    }
+
 	public void update(){
 		try{
 			player.update();
 		}catch(Exception e){
 			Game.information(2, "Error updating player");
 		}
-		
-		try{
-			for (Entity e : entitys) {
-				e.update();
-			}
-			for(Entity e: entitys){
-				if(e.isRemoved()){
-					entitys.remove(e);
-				}
-			}
-		}catch (java.util.ConcurrentModificationException e){
-			Game.information(0,"ConcurrentModificationException in update");
-		}
-		
+
+        try {
+
+		    Iterator<Mob> it = mobs.iterator();
+
+		    while(it.hasNext()) {
+		        Mob m = it.next();
+                m.update();
+                if(m.isRemoved())
+                    it.remove();
+            }
+        } catch (ConcurrentModificationException e) {
+            Game.information(2, "ConcurrentModificationException in update");
+        }
+
 	}
+
+    private int offset;
+    private void render(Screen screen) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (getTile(x, y) == Tile.voidTile) continue;
+                getTile(x, y).render(x * tileSize - xOffset, y * tileSize - yOffset + offset, screen);
+            }
+        }
+    }
 
 	public void renderAll(Screen screen){
 		screen.clear(0x6b76b7);
 		render(screen);
-		try{
-			for(Entity e: entitys){
-				e.render(screen);
-			}	
-		}catch (java.util.ConcurrentModificationException e){
-			Game.information(0,"ConcurrentModificationException in render");
-		}
-		try{
-			player.render(screen);
-		}catch(Exception e){
-			Game.information(2, "Error rendering player");
-		}
-		
-	}
-	
-	public void init() {
-		offset = (int)(-36*height + 393);
-	}
-	
-	int offset;
-	public void render(Screen screen) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				if (getTile(x, y) == Tile.voidTile) continue;
-				getTile(x, y).render(x * tileSize - xOffset, y * tileSize - yOffset + offset, screen);
-			}
-		}
+
+        try {
+            mobs.iterator().forEachRemaining((m) -> m.render(screen));
+
+        } catch (ConcurrentModificationException e) {
+            Game.information(2, "ConcurrentModificationException in render");
+        }
+
+        player.render(screen);
 	}
 
-	// används för att rita ut bilden(världen) i mapmakern
+	// anvï¿½nds fï¿½r att rita ut bilden(vï¿½rlden) i mapmakern
 	public void renderTile(Screen screen) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -95,13 +89,13 @@ public abstract class  BasicLevel {
 		}
 	}
 
-	// används när spelet kör
+	// anvï¿½nds nï¿½r spelet kï¿½r
 	public Tile getTile(int x, int y) {
 		if ((x + y * width >= tiles.length) || y < 0 || x < 0 || x > width || y > height) return Tile.voidTile;
 		return getTileByID(tiles[x + y * width]);
 	}
 	
-	// används till Mapmakern
+	// anvï¿½nds till Mapmakern
 	public Tile getTileByID(int id) {
 		if (id == 1) return Tile.grass;
 		if (id == 2) return Tile.grass2;
@@ -148,10 +142,6 @@ public abstract class  BasicLevel {
 		if (id == 18) return Tile.eGroundV;
 	 */
 	
-	public Mob getMob(int id){
-		return getMob(id,0,0);
-	}
-	
 	public Mob getMob(int id, int x, int y){
 		if(id == 0) return new Skeleton((Level)this,x,y);
 		if(id == 1) return new Goblin((Level)this,x,y);
@@ -165,5 +155,19 @@ public abstract class  BasicLevel {
 		if(m instanceof Boss) return 2;
 		return -1;
 	}
+
+	public void resetLevel() {
+        mobs.clear();
+
+        originMobs.forEach((m) -> mobs.add(m.clone()));
+
+        player.setHp(30);
+        player.dead = false;
+        player.xv = 0;
+        player.yv = 0;
+        player.x = player.xOrigin;
+        player.y = player.yOrigin;
+    }
+
 
 }

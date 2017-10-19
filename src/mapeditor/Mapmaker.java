@@ -300,7 +300,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		Game.information(0, "Loading " + mapname + ".txt");
 		level = new Level(mapname + ".txt");
 		
-		this.mobs = level.entitys;
+		this.mobs = level.mobs;
 		nameTextfield.setText(mapname);
 		width = level.width;
 		if (level.height != 17 && level.height != 7) {
@@ -327,9 +327,9 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 			return;
 		}
 
-		// kollar ifall filen finns isåfall frågas användaren om den vill
-		// fortsätta
-		File f = new File(Level.mapfolder + "\\" + name + ".txt");
+		// kollar ifall filen finns isï¿½fall frï¿½gas anvï¿½ndaren om den vill
+		// fortsï¿½tta
+		File f = new File(Level.mapfolder + File.separator + name + ".txt");
 		if (f.exists()) {
 			int reply = JOptionPane.showConfirmDialog(this, "A file with that name already exists. \nDo you still want to continue?", "File already exists", JOptionPane.YES_OPTION);
 			if (reply == 1) {
@@ -340,11 +340,11 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		// sparar mapen
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(Level.mapfolder +  "\\"+  name + ".txt", "UTF-8");
-			Game.information(0,"Saving to " + Level.mapfolder + "\\" +  name + ".txt");
+			writer = new PrintWriter(Level.mapfolder +  File.separator +  name + ".txt", "UTF-8");
+			Game.information(0,"Saving to " + Level.mapfolder + File.separator +  name + ".txt");
 			writer.println(width + "," + height);
 
-			// Skriver ut tilesen i världen till filen.
+			// Skriver ut tilesen i vï¿½rlden till filen.
 			writer.print("" + level.tiles[0]);
 			for (int i = 1; i < level.tiles.length; i++) {
 				writer.print("," + level.tiles[i]);

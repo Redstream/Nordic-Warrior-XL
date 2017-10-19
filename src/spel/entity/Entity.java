@@ -7,7 +7,7 @@ import spel.graphics.Screen;
 import spel.graphics.Sprite;
 import spel.level.Level;
 
-public abstract class  Entity {
+public abstract class  Entity implements Cloneable{
 
 	protected boolean removed = false;
 	protected Sprite sprite;
@@ -16,29 +16,20 @@ public abstract class  Entity {
 	public int hitboxWidth = 0, hitboxHeight = 0;
 	public boolean dead = false;
 
-	public Entity() {
+	public void attackThis(Mob attacker, int damage, int knockback, int freezems) {}
 
-	}
+	public abstract void update();
 
-	public void attackThis(Mob attacker, int damage, int knockback, int freezems) {
-	}
+    public abstract void render(Screen screen);
 
-	public void update() {
+    public void kill(){
+        removed = true;
+    }
 
-	}
-	
 	public void push(int units){
-		
-	}
-	
-	public void kill(){
-		removed = true;
-	}
+        this.x += units;
+    }
 
-	public void render(Screen screen) {
-
-	}
-	
 	public static boolean intersect(Rectangle r1, Rectangle r2) {
 		  return (((r1.x >= r2.x) && (r1.x < (r2.x + r2.getWidth()))) || ((r2.x >= r1.x) && (r2.x < (r1.x + r1.getWidth())))) &&
 		  (((r1.y >= r2.y) && (r1.y < (r2.y + r2.getHeight()))) || ((r2.y >= r1.y) && (r2.y < (r1.y + r1.getHeight()))));
@@ -66,4 +57,8 @@ public abstract class  Entity {
 	public int getY() {
 		return (int) y;
 	}
+
+	public Entity clone() throws CloneNotSupportedException{
+	    return (Entity) super.clone();
+    }
 }

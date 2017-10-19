@@ -32,6 +32,7 @@ public class LevelSelect extends JPanel {
 
 	public LevelSelect(final Menu parent)  {
 		this.parent = parent;
+		System.out.println(Level.mapfolder);
 		String[] maps = listMaps(Level.mapfolder);
 		list = new JList<String>(maps);
 		list.setSize(list.getWidth(), 100);
@@ -45,10 +46,10 @@ public class LevelSelect extends JPanel {
 				File dest;
 				
 				inputUrl = getClass().getResource("/res/maps/Demo-map.txt");
-				dest = new File(Level.mapfolder+"//Demo-map.txt");
+				dest = new File(Level.mapfolder+ File.separator + "Demo-map.txt");
 				FileUtils.copyURLToFile(inputUrl, dest);
 				inputUrl = getClass().getResource("/res/maps/Demo-map.desc.txt");
-				dest = new File(Level.mapfolder+"//Demo-map.desc.txt");
+				dest = new File(Level.mapfolder+ File.separator + "Demo-map.desc.txt");
 				FileUtils.copyURLToFile(inputUrl, dest);
 			}catch(Exception ex){
 				Game.information(2,ex.toString());
@@ -71,7 +72,7 @@ public class LevelSelect extends JPanel {
 				
 				if (!lastclicked.equalsIgnoreCase(list.getSelectedValue())) {			
 					try {
-						BufferedReader in = new BufferedReader(new FileReader( Level.mapfolder + "\\" + level + ".desc.txt"));
+						BufferedReader in = new BufferedReader(new FileReader( Level.mapfolder + File.separator + level + ".desc.txt"));
 						String s = "";
 						String line;
 						while ((line = in.readLine()) != null) {

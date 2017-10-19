@@ -94,7 +94,7 @@ public class Goblin extends Mob{
 		destructTime += 10 * Game.random.nextInt(50);
 		setAnimation(animations[1],400);
 		int eX,eY;
-		for (Entity e : level.entitys) {		
+		for (Mob e : level.mobs) {
 			eX = e.getX()+hitboxWidth/2;
 			eY = e.getY()+hitboxHeight/2;
 			if(eX > x+hitboxWidth/2-blastRadius && eX < x+hitboxWidth/2+blastRadius){
