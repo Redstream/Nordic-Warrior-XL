@@ -7,19 +7,19 @@ public class Log {
     public static final int SEVERE = 2;
     private static final int filter = 0;
 
-    public static void log(int type, String message){
+    public static void log(int type, String message) {
         String typeText = "";
-        switch(type){
+        switch (type) {
             case INFORMATION:
-                if(filter > 0) return;
+                if (filter > 0) return;
                 typeText = "[INFORMATION] ";
                 break;
             case WARNING:
-                if(filter > 1) return;
+                if (filter > 1) return;
                 typeText = "[WARNING] ";
                 break;
             case SEVERE:
-                if(filter > 2) return;
+                if (filter > 2) return;
                 typeText = "[SEVERE] ";
                 break;
         }
