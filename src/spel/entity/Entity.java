@@ -76,7 +76,7 @@ public abstract class Entity implements Cloneable {
         try {
             return (Mob) super.clone();
         } catch (CloneNotSupportedException e) {
-            Log.log(Log.WARNING, "Could not clone Mob");
+            Log.msg(Log.WARNING, "Could not clone Mob");
             return null;
         }
     }

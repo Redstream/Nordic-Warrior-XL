@@ -1,9 +1,9 @@
 package spel;
 
-import org.apache.commons.io.FileUtils;
 import spel.graphics.Screen;
 import spel.input.Keyboard;
 import spel.level.Level;
+import spel.level.MapLoader;
 import spel.menu.Menu;
 
 import javax.swing.*;
@@ -13,21 +13,18 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-import static spel.menu.LevelSelect.listMaps;
 
 public class Game extends Canvas {
 
     public static Game game;
     public final static String NAME = "Nordic-Warrior-XL";
     private final static int stats = 2;
-    public final static int WIDTH = 700;
+    public final static int WIDTH = 1400;
     public final static int HEIGHT = WIDTH * 9 / 16;
-    private final static float scale = 2f;
+    private final static float scale = 1f;
     private static Dimension screenSize = new Dimension((int) (WIDTH * scale), (int) (WIDTH * scale * 9 / 16));
     private final static boolean FULLSCREEN = false;
     public static Random random = new Random();
@@ -134,7 +131,6 @@ public class Game extends Canvas {
      * @param path to level
      */
     public void setLevel(String path) {
-        System.out.println(path);
         level = new Level(path);
         level.player.key = key;
     }
@@ -280,47 +276,20 @@ public class Game extends Canvas {
 
 
     /**
-     * @deprecated use Log.log
+     * @deprecated use Log.msg
      */
     public static void information(int type, String message) {
-        Log.log(type, message);
+        Log.msg(type, message);
     }
 
-    /**
-     * Add all demo maps.
-     * Used to make sure player has at least a few maps.
-     */
-    private static void addDemoMaps() {
-        if (listMaps(Level.mapfolder).length == 0) {
-            try {
-                URL inputUrl;
-                File dest;
 
-                String[] demoMaps = {"Demo-map", "Franzjump", "Franzmaze"};
-
-                for (String map : demoMaps) {
-                    inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".txt");
-                    dest = new File(Level.mapfolder + File.separator + map + ".txt");
-                    FileUtils.copyURLToFile(inputUrl, dest);
-                    inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".desc.txt");
-                    if (inputUrl != null) {
-                        dest = new File(Level.mapfolder + File.separator + map + " .desc.txt");
-                        FileUtils.copyURLToFile(inputUrl, dest);
-                    }
-                }
-
-            } catch (Exception e) {
-                Game.information(2, e.toString());
-            }
-        }
-    }
 
     /**
      * @param args ignored
      */
     public static void main(String[] args) {
         //System.setProperty("sun.java2d.opengl","True");
-        addDemoMaps();
+        MapLoader.addDemoMaps();
         game = new Game();
         game.start();
     }

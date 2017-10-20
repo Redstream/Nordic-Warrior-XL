@@ -1,6 +1,7 @@
 package spel.graphics;
 
 import spel.Game;
+import spel.Log;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -24,7 +25,7 @@ public class Sprite {
             width = img.getWidth();
             pixels = img.getRGB(0, 0, width, height, pixels, 0, width);
         } catch (Exception e) {
-            Game.information(2, "Error loading sprite @" + path);
+            Log.msg(Log.WARNING, "Error loading sprite @" + path);
         }
     }
 

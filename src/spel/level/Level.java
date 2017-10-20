@@ -12,7 +12,6 @@ import java.io.FileReader;
 
 public class Level extends BasicLevel {
 
-    public static File mapfolder = new File(System.getProperty("user.home") + File.separator + Game.NAME + File.separator + "maps");
     public static final int tileSize = 36;
 
     public long start = 0;
@@ -76,7 +75,7 @@ public class Level extends BasicLevel {
      */
     private void loadLevel(String path) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(mapfolder + File.separator + path));
+            BufferedReader br = new BufferedReader(new FileReader(MapLoader.defaultFolder + File.separator + path));
             try {
                 String s = br.readLine();
                 width = Integer.parseInt(s.split(",")[0]);

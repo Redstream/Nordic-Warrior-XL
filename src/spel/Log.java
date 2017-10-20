@@ -7,7 +7,7 @@ public class Log {
     public static final int SEVERE = 2;
     private static final int filter = 0;
 
-    public static void log(int type, String message) {
+    public static void msg(int type, String message) {
         String typeText = "";
         switch (type) {
             case INFORMATION:

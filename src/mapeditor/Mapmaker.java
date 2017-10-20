@@ -33,6 +33,7 @@ import spel.entity.mob.player.Player;
 import spel.graphics.Screen;
 import spel.input.Keyboard;
 import spel.level.Level;
+import spel.level.MapLoader;
 
 public class Mapmaker extends JFrame implements MouseMotionListener, MouseListener {
 
@@ -329,7 +330,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 
 		// kollar ifall filen finns is�fall fr�gas anv�ndaren om den vill
 		// forts�tta
-		File f = new File(Level.mapfolder + File.separator + name + ".txt");
+		File f = new File(MapLoader.defaultFolder + File.separator + name + ".txt");
 		if (f.exists()) {
 			int reply = JOptionPane.showConfirmDialog(this, "A file with that name already exists. \nDo you still want to continue?", "File already exists", JOptionPane.YES_OPTION);
 			if (reply == 1) {
@@ -340,8 +341,8 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		// sparar mapen
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(Level.mapfolder +  File.separator +  name + ".txt", "UTF-8");
-			Game.information(0,"Saving to " + Level.mapfolder + File.separator +  name + ".txt");
+			writer = new PrintWriter(MapLoader.defaultFolder +  File.separator +  name + ".txt", "UTF-8");
+			Game.information(0,"Saving to " + MapLoader.defaultFolder + File.separator +  name + ".txt");
 			writer.println(width + "," + height);
 
 			// Skriver ut tilesen i v�rlden till filen.
@@ -427,7 +428,6 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	}
 
 	public static void main(String args[]) {
-
 		try {
 			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {

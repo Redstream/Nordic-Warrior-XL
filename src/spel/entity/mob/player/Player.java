@@ -68,10 +68,20 @@ public class Player extends Mob {
     }
 
     public void render(Screen screen) {
-        screen.offset.setLocation(0, + (int)y / 2 - spawn.getY() / 2);
-        System.out.println(getSprite().getWidth() / 2);
-        screen.renderSprite(getSprite(), Game.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Game.HEIGHT / 2 - 70, dir);
-        screen.offset.setLocation((int) x - Game.WIDTH / 2, Game.HEIGHT / 2 - (int)y / 2 - spawn.getY() / 2);
+        // Used to be able to have the camera follow the character after this height have been reached.
+        double startFollow = Game.HEIGHT * 3 / 5.0;
+        if(y > startFollow) {
+            int diff = (int) (startFollow - y);
+            screen.offset.setLocation(0, -Game.HEIGHT/2);
+            screen.renderSprite(getSprite(), Game.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Game.HEIGHT / 2 - (int)startFollow - 70, dir);
+            screen.offset.setLocation((int) x - Game.WIDTH / 2, diff);
+        } else {
+            screen.offset.setLocation(0, -Game.HEIGHT/2 );
+            screen.renderSprite(getSprite(), Game.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Game.HEIGHT / 2 - (int)y - 70, dir);
+            screen.offset.setLocation((int) x - Game.WIDTH / 2, 0);
+        }
+
+
         for (int i = 0; i < projectiles.size(); i++) {
             projectiles.get(i).render(screen);
         }
