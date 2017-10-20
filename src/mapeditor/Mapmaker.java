@@ -27,13 +27,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import spel.Game;
-import spel.entity.mob.Mob;
-import spel.entity.mob.player.Player;
-import spel.graphics.Screen;
-import spel.input.Keyboard;
-import spel.level.Level;
-import spel.level.MapLoader;
+import game.Game;
+import game.Log;
+import game.entity.mob.Mob;
+import game.entity.mob.player.Player;
+import game.graphics.Screen;
+import game.input.Keyboard;
+import game.level.Level;
+import game.level.MapLoader;
 
 public class Mapmaker extends JFrame implements MouseMotionListener, MouseListener {
 
@@ -47,7 +48,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 
 	public BufferedImage img;
 	private int[] pixels;
-	private List<Mob> mobs = new ArrayList<Mob>();
+	private List<Mob> mobs = new ArrayList<>();
 	private Level level;
 	private Screen screen;
 	private JList<String> tileList;
@@ -55,8 +56,9 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	private Keyboard key;
 
 	public Mapmaker() {
-
 		initComponents();
+		level = new Level(width, height);
+		level.player = new Player(36,36);
 		init();
 		addKeyListener(key);
 		setFocusable(true);
@@ -68,8 +70,6 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		dim = new Dimension(width * tileSize, height * tileSize);
 		img = new BufferedImage(width * tileSize, height * tileSize, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
-		level = new Level(width, height);
-		level.player = new Player(36,36);
 		screen = new Screen(width * tileSize, height * tileSize);
 
 		drawPanel.setPreferredSize(dim);
@@ -117,8 +117,6 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		scrollPane.setBackground(new java.awt.Color(0, 0, 0));
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-
 
 		jMenuItem1.setText("jMenuItem1");
 
@@ -278,11 +276,13 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	private void newMapActionPerformed(java.awt.event.ActionEvent evt) {
 
 		//nameTextfield.setText(JOptionPane.showInputDialog(this, "Map Name"));
-		String s = JOptionPane.showInputDialog(this, "Map Width(Tiles)");
+		String w = JOptionPane.showInputDialog(this, "Map Width(Tiles)");
+		String h = JOptionPane.showInputDialog(this, "Map Height(Tiles)");
 		try {
-			width = Integer.parseInt(s);
+			height = Integer.parseInt(h);
+			width = Integer.parseInt(w);
 		} catch (Exception e) {
-			Game.information(2,"invalid width");
+			Log.msg(Log.SEVERE,"invalid width or height");
 		}
 		mobs.clear();
 		level = new Level(width, height);
@@ -298,20 +298,25 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	}
 
 	public void loadLevel(String mapname) {
-		Game.information(0, "Loading " + mapname + ".txt");
+		Log.msg(Log.INFORMATION, "Loading " + mapname + ".txt");
 		level = new Level(mapname + ".txt");
 		
 		this.mobs = level.mobs;
 		nameTextfield.setText(mapname);
 		width = level.width;
-		if (level.height != 17 && level.height != 7) {
-			if (level.width == 0) {
-				JOptionPane.showMessageDialog(this, "Couldnt find map or map file is corrupted.", "Error", JOptionPane.DEFAULT_OPTION);
-			}
-		}
 		height = level.height;
-		scrollPane.setSize(width * 36, height * 36);
+
+		Log.debug("" + width);
+		init();
+		drawPanel.setSize(width, height);
+		scrollPane.getViewport().setSize(width, height);
+		scrollPane.setSize(width, height);
+		scrollPane.getHorizontalScrollBar().setValue(scrollPane.getHorizontalScrollBar().getMaximum());
+		scrollPane.getHorizontalScrollBar().setUnitIncrement(10);
+		scrollPane.getVerticalScrollBar().setValue(0);
 		redraw();
+		validate();
+		revalidate();
 	}
 
 	private void loadMapActionPerformed(java.awt.event.ActionEvent evt) {
@@ -408,6 +413,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	public void mouseMoved(MouseEvent e) {
 		jLabel2.setText("" + (e.getX() + scrollPane.getHorizontalScrollBar().getValue()) / tileSize);
 		jLabel3.setText("" + (e.getY() + scrollPane.getVerticalScrollBar().getValue()) / tileSize);
+		redraw();
 	}
 
 	@Override
@@ -438,12 +444,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		} catch (Exception e) {
 		}
 
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new Mapmaker().setVisible(true);
-			}
-		});
-
+		java.awt.EventQueue.invokeLater(() -> new Mapmaker().setVisible(true));
 	}
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
