@@ -34,7 +34,10 @@ public class Player extends Mob {
 		this.y = yOrigin = y;
 		init();
 	}
-	
+
+	/**
+	 * Create animations, set health.
+	 */
 	public void init(){
 		animations[1] = new Animation(SpriteSheet.player, 36, 72, 4, 0); //Move
 		animations[0] = new Animation(SpriteSheet.player, 36, 72, 5, 12); //Stance
@@ -51,8 +54,7 @@ public class Player extends Mob {
 		hitBox = new Rectangle((int)x,(int)y,hitboxWidth,hitboxHeight);
 	}
 
-	
-	public void throwAxe() {
+	private void throwAxe() {
 		long cooldown = 600;
 		long now = level.time;
 		if (now > axeTimer) {
@@ -61,7 +63,6 @@ public class Player extends Mob {
 			axeTimer = now + cooldown;
 		}
 	}
-	
 
 	public void render(Screen screen) {
 		level.xOffset = (int) x - Game.WIDTH / 2;
@@ -93,7 +94,16 @@ public class Player extends Mob {
 			move(0,0);
 			return;
 		}
+
 		if(key == null)	return;
+
+		if (key.restart) {
+			xOrigin = level.spawnX;
+			yOrigin = level.spawnY;
+			this.level.resetLevel();
+			return;
+		}
+
 		hitBox.setLocation((int)x, (int)y);
 		if (key.left ^ key.right) {
 			dir = key.left ? -1 : 1;
@@ -104,10 +114,7 @@ public class Player extends Mob {
 			xv = 0.0; //Deceleration? ,(Math.abs(xv) < 0.5 ? 0.0 : xv * 0.9);
 			setAnimation(animations[0],150);
 		}
-		if (key.restart) {
-            this.level.resetLevel();
-		}
-		if (key.jump && onGround || (godmode && key.jump)) {
+		if (key.jump && (onGround || godmode)) {
 			yv = 8;
 			onGround = false;
 		} else if (key.down && godmode) {

@@ -30,10 +30,12 @@ public abstract class Mob extends Entity {
 
 	protected List<Projectile> projectiles = new ArrayList<>();
 
+	@Override
 	public void render(Screen screen) {
 		screen.renderSprite(animation.getSprite(), (int) x - level.xOffset, Game.HEIGHT - (int) y + level.yOffset - 70, dir);
 	}
 
+	@Override
 	public void update() {
 		for(Projectile p: projectiles) {
 			p.update();
@@ -70,6 +72,10 @@ public abstract class Mob extends Entity {
 			}
 		}
 		
+	}
+
+	public void kill(){
+		removed = true;
 	}
 
 	protected boolean move(double xv, double yv) {
@@ -116,6 +122,7 @@ public abstract class Mob extends Entity {
 		return collision;
 	}
 
+	@Override
 	protected boolean collision(int x, int y) {
 		if (y < -1) {
 			kill();
@@ -144,6 +151,7 @@ public abstract class Mob extends Entity {
 		return false;
 	}
 
+	@Override
 	public void push(int units) {
 		if (!collision((int) (x + units), (int) y)) {
 			x += units;
@@ -164,14 +172,6 @@ public abstract class Mob extends Entity {
 		push(knockback * attacker.dir);
 		health -= damage;
 		graceTime = level.time + 2000;
-	}
-
-	public int getX() {
-		return (int) x;
-	}
-
-	public int getY() {
-		return (int) y;
 	}
 
 	public void setHp(int hp) {

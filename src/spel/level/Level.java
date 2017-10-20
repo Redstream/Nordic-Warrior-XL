@@ -10,9 +10,6 @@ import spel.entity.Entity;
 import spel.entity.mob.Mob;
 import spel.entity.mob.player.Player;
 
-
-
-
 public class Level extends BasicLevel {
 	
 	public static File mapfolder = new File(System.getProperty("user.home") + File.separator + Game.NAME + File.separator + "maps");
@@ -24,6 +21,7 @@ public class Level extends BasicLevel {
 	public Rectangle finnish = new Rectangle(-100,-100,72,72);
 	public boolean won = false;
 	private long finnishTime = 0;
+	public int spawnX, spawnY;
 
 	/**
 	 * Load level from path
@@ -132,9 +130,12 @@ public class Level extends BasicLevel {
 					
 					Game.information(1,"Error loading player spawn, spawning at 36,36. \n"+e.toString());
 				}
-				
-				
-				try{
+
+				// Set player spawn
+				spawnX = player.xOrigin;
+				spawnY = player.yOrigin;
+
+				try {
 					s = br.readLine();
 					int rx,ry,rw,rh;
 					rx = Integer.parseInt(s.split(",")[0]);

@@ -21,10 +21,6 @@ public abstract class  Entity implements Cloneable{
 
     public abstract void render(Screen screen);
 
-    public void kill(){
-        removed = true;
-    }
-
 	public void push(int units){
         this.x += units;
     }

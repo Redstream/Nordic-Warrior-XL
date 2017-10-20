@@ -29,7 +29,8 @@ public abstract class  BasicLevel {
 	public List<Mob> mobs = new ArrayList<>();
 	List<Mob> originMobs = new ArrayList<>();
 
-	public long startTime;
+	protected long startTime;
+	protected int tries = 0;
 
     public void init() {
 		startTime = System.currentTimeMillis();
@@ -138,6 +139,8 @@ public abstract class  BasicLevel {
 	}
 
 	public void resetLevel() {
+		tries ++;
+
 		// Reset Mobs
         mobs.clear();
         originMobs.forEach((m) -> mobs.add(m.clone()));
