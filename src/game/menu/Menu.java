@@ -1,6 +1,7 @@
 package game.menu;
 
 import game.Game;
+import game.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -41,7 +42,7 @@ public class Menu extends JPanel {
             BufferedImage img = ImageIO.read(Menu.class.getResourceAsStream("/res/graphics/nordic_warriorXL.jpg"));
             g.drawImage(img, 0, 0, j.getWidth(), j.getHeight(), null);
         } catch (Exception e) {
-            Game.information(2, e.toString());
+            Log.msg(Log.SEVERE, e.toString());
         }
 
 

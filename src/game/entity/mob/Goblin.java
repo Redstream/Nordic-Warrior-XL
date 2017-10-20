@@ -1,34 +1,25 @@
 package game.entity.mob;
 
-import game.Game;
 import game.graphics.Animation;
 import game.graphics.SpriteSheet;
 import game.level.Level;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Goblin extends Mob {
-    public int blastRadius = 100;
-    public long destructTime = 2000;
-    public long explodedTime = 0;
-    public static int exploding = 0;
-
-
-    public Goblin(Level level) {
-        x = 100;
-        y = 100;
-        this.level = level;
-        init();
-    }
+    private int blastRadius = 100;
+    private long destructTime = 2000;
+    private long explodedTime = 0;
+    private static int exploding = 0;
+    private Random rand = new Random();
 
     public Goblin(Level level, int x, int y) {
         this.x = x;
         this.y = y;
         this.level = level;
-
         init();
     }
-
 
     public void init() {
         xv = 3;
@@ -44,6 +35,7 @@ public class Goblin extends Mob {
         animation.start(200);
     }
 
+    @Override
     public void update() {
         if (removed) return;
         if (dead) {
@@ -73,12 +65,14 @@ public class Goblin extends Mob {
 
     }
 
+    @Override
     public void attackThis(Mob attacker, int damage, int knockback, int freezems) {
         if (dead) return;
         kill();
 
     }
 
+    @Override
     public void kill() {
         if (dead) return;
         dead = true;
@@ -86,10 +80,9 @@ public class Goblin extends Mob {
         explodedTime = level.time;
     }
 
-
-    public void selfDestruct() {
+    private void selfDestruct() {
         exploding++;
-        destructTime += 10 * Game.random.nextInt(50);
+        destructTime += 10 * rand.nextInt(50);
         setAnimation(animations[1], 400);
         int eX, eY;
         for (Mob e : level.mobs) {

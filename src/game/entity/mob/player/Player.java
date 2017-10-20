@@ -1,6 +1,6 @@
 package game.entity.mob.player;
 
-import game.Game;
+import game.Settings;
 import game.entity.mob.Mob;
 import game.entity.projectile.AxeProjectile;
 import game.entity.projectile.Projectile;
@@ -69,16 +69,16 @@ public class Player extends Mob {
 
     public void render(Screen screen) {
         // Used to be able to have the camera follow the character after this height have been reached.
-        double startFollow = Game.HEIGHT * 3 / 5.0;
+        double startFollow = Settings.HEIGHT * 3 / 5.0;
         if(y > startFollow) {
             int diff = (int) (startFollow - y);
-            screen.offset.setLocation(0, -Game.HEIGHT/2);
-            screen.renderSprite(getSprite(), Game.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Game.HEIGHT / 2 - (int)startFollow - 70, dir);
-            screen.offset.setLocation((int) x - Game.WIDTH / 2, diff);
+            screen.offset.setLocation(0, -Settings.HEIGHT/2);
+            screen.renderSprite(getSprite(), Settings.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Settings.HEIGHT / 2 - (int)startFollow - 70, dir);
+            screen.offset.setLocation((int) x - Settings.WIDTH / 2, diff);
         } else {
-            screen.offset.setLocation(0, -Game.HEIGHT/2 );
-            screen.renderSprite(getSprite(), Game.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Game.HEIGHT / 2 - (int)y - 70, dir);
-            screen.offset.setLocation((int) x - Game.WIDTH / 2, 0);
+            screen.offset.setLocation(0, -Settings.HEIGHT/2 );
+            screen.renderSprite(getSprite(), Settings.WIDTH / 2 + dir * -1 * (getSprite().getWidth() / 2 - 18), Settings.HEIGHT / 2 - (int)y - 70, dir);
+            screen.offset.setLocation((int) x - Settings.WIDTH / 2, 0);
         }
 
 

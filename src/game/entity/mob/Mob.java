@@ -1,6 +1,6 @@
 package game.entity.mob;
 
-import game.Game;
+import game.Settings;
 import game.entity.Entity;
 import game.entity.mob.player.Player;
 import game.entity.projectile.Projectile;
@@ -33,7 +33,7 @@ public abstract class Mob extends Entity {
 
     @Override
     public void render(Screen screen) {
-        screen.renderSprite(animation.getSprite(), (int) x , Game.HEIGHT - (int) y - 70, dir);
+        screen.renderSprite(animation.getSprite(), (int) x , Settings.HEIGHT - (int) y - 70, dir);
     }
 
     @Override

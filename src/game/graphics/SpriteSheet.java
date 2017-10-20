@@ -1,6 +1,7 @@
 package game.graphics;
 
 import game.Game;
+import game.Log;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,7 +39,7 @@ public class SpriteSheet {
         try {
             img = ImageIO.read(getClass().getClassLoader().getResource(path));
         } catch (Exception e) {
-            Game.information(2, "Error loading spritesheet " + path);
+            Log.msg(Log.SEVERE, "Error loading spritesheet " + path);
             return;
         }
         height = img.getHeight();

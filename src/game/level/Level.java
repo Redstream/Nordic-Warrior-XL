@@ -1,6 +1,7 @@
 package game.level;
 
 import game.Game;
+import game.Log;
 import game.entity.Entity;
 import game.entity.mob.Mob;
 import game.entity.mob.player.Player;
@@ -85,7 +86,7 @@ public class Level extends BasicLevel {
 
                 s = br.readLine();
                 if (s.equalsIgnoreCase("")) {
-                    Game.information(2, "Map empty");
+                    Log.msg(Log.SEVERE, "Map empty");
                     br.close();
                     return;
                 }
@@ -93,7 +94,7 @@ public class Level extends BasicLevel {
 
                 for (int i = 0; i < tiles.length; i++) {
                     if (i == s.split(",").length) {
-                        Game.information(2, "file corrupt");
+                        Log.msg(Log.SEVERE, "file corrupt");
                         break;
                     }
                     tiles[i] = Integer.parseInt(s.split(",")[i]);
@@ -113,7 +114,7 @@ public class Level extends BasicLevel {
                     }
 
                 } catch (Exception e) {
-                    Game.information(1, "Error loading mobs" + e.toString());
+                    Log.msg(Log.WARNING, "Error loading mobs" + e.toString());
                 }
 
                 try {
@@ -130,7 +131,7 @@ public class Level extends BasicLevel {
                         player = new Player(36, 36);
                     }
 
-                    Game.information(1, "Error loading player spawn, spawning at 36,36. \n" + e.toString());
+                    Log.msg(Log.INFORMATION, "Error loading player spawn, spawning at 36,36. \n" + e.toString());
                 }
 
                 // Set player spawn
@@ -146,16 +147,16 @@ public class Level extends BasicLevel {
                     rh = Integer.parseInt(s.split(",")[3]);
                     finnish = new Rectangle(rx, ry, rw, rh);
                 } catch (Exception e) {
-                    Game.information(2, "Error loading level finnish" + e.toString());
+                    Log.msg(Log.SEVERE, "Error loading level finnish" + e.toString());
                 }
 
                 br.close();
             } catch (Exception e) {
-                Game.information(1, "Corrupted map file\t" + path + " " + e.toString());
+                Log.msg(Log.WARNING, "Corrupted map file\t" + path + " " + e.toString());
             }
 
         } catch (Exception e) {
-            Game.information(2, "Map file not found.");
+            Log.msg(Log.SEVERE,  "Map file not found.");
         }
     }
 

@@ -1,6 +1,7 @@
 package game.input;
 
 import game.Game;
+import game.Settings;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -8,20 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 public class Keyboard implements KeyListener, MouseMotionListener {
-
-    private final int JUMP_KEY = KeyEvent.VK_SPACE;
-    private final int RIGHT_KEY = KeyEvent.VK_D;
-    private final int RIGHT_KEY_2 = KeyEvent.VK_RIGHT;
-    private final int LEFT_KEY = KeyEvent.VK_A;
-    private final int LEFT_KEY_2 = KeyEvent.VK_LEFT;
-    private final int ATTACK_KEY = KeyEvent.VK_X;
-    private final int DOWN_KEY = KeyEvent.VK_S;
-    private final int WALK_KEY = KeyEvent.VK_SHIFT;
-    private final int RESTART_KEY = KeyEvent.VK_R;
-    private final int ESC_KEY = KeyEvent.VK_ESCAPE;
-    private final int PAUSE_KEY = KeyEvent.VK_ESCAPE;
-    private final int CHECKPOINT_KEY = KeyEvent.VK_C;
-    private final int FPSLOCK_KEY = KeyEvent.VK_F;
 
 
     public int mouseX = 0, mouseY = 0;
@@ -36,20 +23,20 @@ public class Keyboard implements KeyListener, MouseMotionListener {
     }
 
     public void update() {
-        jump = keys[JUMP_KEY];
-        right = keys[RIGHT_KEY] || keys[RIGHT_KEY_2];
-        left = keys[LEFT_KEY] || keys[LEFT_KEY_2];
-        down = keys[DOWN_KEY];
-        walk = keys[WALK_KEY];
+        jump = keys[Settings.JUMP_KEY];
+        right = keys[Settings.RIGHT_KEY] || keys[Settings.RIGHT_KEY_2];
+        left = keys[Settings.LEFT_KEY] || keys[Settings.LEFT_KEY_2];
+        down = keys[Settings.DOWN_KEY];
+        walk = keys[Settings.WALK_KEY];
         //esc = keys[ESC_KEY];
-        restart = keys[RESTART_KEY];
+        restart = keys[Settings.RESTART_KEY];
 
 
         if (esc) {
             Game.game.togglePause();
             esc = false;
         }
-        if (keys[CHECKPOINT_KEY]) {
+        if (keys[Settings.CHECKPOINT_KEY]) {
             game.level.setCheckPoint();
         }
     }
@@ -60,13 +47,13 @@ public class Keyboard implements KeyListener, MouseMotionListener {
     public void keyPressed(KeyEvent e) {
         keys[e.getKeyCode()] = true;
 
-        if (e.getKeyCode() == ESC_KEY) {
+        if (e.getKeyCode() == Settings.ESC_KEY) {
             esc = true;
-        } else if (e.getKeyCode() == PAUSE_KEY) {
+        } else if (e.getKeyCode() == Settings.PAUSE_KEY) {
             game.togglePause2();
         } else if (e.getKeyCode() >= 49 && e.getKeyCode() <= 49 + 2) {
             Game.game.level.mobs.add(Game.game.level.getMob(e.getKeyCode() - 49, (Game.game.level.player.getX() + 100 * Game.game.level.player.dir), (Game.game.level.player.getY() + 100)));
-        } else if (e.getKeyCode() == ATTACK_KEY && !attackLock) {
+        } else if (e.getKeyCode() == Settings.ATTACK_KEY && !attackLock) {
             attack = true;
             attackLock = true;
         }
@@ -75,7 +62,7 @@ public class Keyboard implements KeyListener, MouseMotionListener {
     @Override
     public void keyReleased(KeyEvent e) {
         keys[e.getKeyCode()] = false;
-        if (e.getKeyCode() == ATTACK_KEY) {
+        if (e.getKeyCode() == Settings.ATTACK_KEY) {
             attackLock = false;
         }
 

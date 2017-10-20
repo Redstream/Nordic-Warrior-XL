@@ -1,5 +1,6 @@
 package game.level;
 
+import game.Settings;
 import org.apache.commons.io.FileUtils;
 import game.Game;
 import game.Log;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 
 public class MapLoader {
 
-    public static File defaultFolder = new File(System.getProperty("user.home") + File.separator + Game.NAME + File.separator + "maps");
+    public static File defaultFolder = new File(System.getProperty("user.home") + File.separator + Settings.NAME + File.separator + "maps");
     public static String[] defaultMaps = {"Demo-map", "Franzjump", "Franzmaze"};
 
     /**

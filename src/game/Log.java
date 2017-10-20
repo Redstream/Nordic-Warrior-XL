@@ -29,4 +29,9 @@ public class Log {
     public static void debug(String s) {
         System.out.println("[DEBUG] " + s);
     }
+
+    // Use this in future
+    public enum LogLevel {
+        DEBUG, INFORMATION, WARNING , SEVERE
+    }
 }

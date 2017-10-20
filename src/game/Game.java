@@ -16,25 +16,16 @@ import java.awt.image.DataBufferInt;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-
 public class Game extends Canvas {
 
     public static Game game;
-    public final static String NAME = "Nordic-Warrior-XL";
-    private final static int stats = 2;
-    public final static int WIDTH = 900;
-    public final static int HEIGHT = WIDTH * 9 / 16;
-    private final static float scale = 2f;
-    private static Dimension screenSize = new Dimension((int) (WIDTH * scale), (int) (WIDTH * scale * 9 / 16));
-    private final static boolean FULLSCREEN = false;
-    public static Random random = new Random();
+    private Dimension screenSize = new Dimension((int) (Settings.WIDTH * Settings.scale), (int) (Settings.HEIGHT * Settings.scale));
 
     private BufferedImage image;
     private int[] pixels;
 
     private int frames;
     private int updates;
-
     private boolean running = false;
     private boolean paused = true;
 
@@ -57,7 +48,7 @@ public class Game extends Canvas {
      * Find screen and set size
      */
     private void setSize() {
-        screen = new Screen(WIDTH, HEIGHT);
+        screen = new Screen(Settings.WIDTH, Settings.HEIGHT);
         frame = new JFrame("Loading");
 
         frame.addComponentListener(new ComponentListener() {
@@ -84,10 +75,10 @@ public class Game extends Canvas {
         // pixels �r direktkopplade till images pixlar. �ndrar du v�rdet p�
         // n�got i pixels �ndras det ocks� i image.
         // Formatet �r hexadeximal f�rgkodning(0-255) Ex: 0xffffff, 0x11aa22,
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage(Settings.WIDTH, Settings.HEIGHT, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
-        if (FULLSCREEN) {
+        if (Settings.FULLSCREEN) {
             screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             frame.getContentPane().setSize(screenSize.width, screenSize.height);
             frame.setPreferredSize(new Dimension(screenSize.width, screenSize.height));
@@ -111,7 +102,7 @@ public class Game extends Canvas {
 
         // frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle(NAME);
+        frame.setTitle(Settings.NAME);
         addKeyListener(key);
         addMouseMotionListener(key);
         frame.add(menu, "1");
@@ -179,14 +170,14 @@ public class Game extends Canvas {
         }
 
         // Visar stats.
-        if (stats > 0) {
+        if (Settings.stats > 0) {
             g.setFont(new Font("Dialog", Font.PLAIN, 12));
             g.setColor(Color.WHITE);
             g.drawString("FPS " + frames + ", " + "UPS " + updates, 10, 15);
-            if (stats > 1) {
+            if (Settings.stats > 1) {
                 g.drawString("X " + level.player.getX() + " Y " + level.player.getY(), 10, 35);
                 g.drawString("Xv " + df.format(level.player.xv) + " Yv " + df.format(level.player.yv), 10, 55);
-                if (stats > 2) {
+                if (Settings.stats > 2) {
                     g.drawString("onGround: " + level.player.onGround, 10, 75);
                     g.drawString("moving: " + level.player.moving, 10, 95);
                 }
@@ -273,16 +264,6 @@ public class Game extends Canvas {
     public void togglePause2() {
         paused = !paused;
     }
-
-
-    /**
-     * @deprecated use Log.msg
-     */
-    public static void information(int type, String message) {
-        Log.msg(type, message);
-    }
-
-
 
     /**
      * @param args ignored

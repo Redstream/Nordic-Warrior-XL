@@ -1,6 +1,6 @@
 package game.level;
 
-import game.Game;
+import game.Settings;
 import game.entity.mob.Boss;
 import game.entity.mob.Goblin;
 import game.entity.mob.Mob;
@@ -30,7 +30,7 @@ public abstract class BasicLevel {
 
     public void init() {
         startTime = System.currentTimeMillis();
-        offset = -Level.tileSize * height + Game.HEIGHT;
+        offset = -Level.tileSize * height + Settings.HEIGHT;
     }
 
     public void update() {

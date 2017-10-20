@@ -322,7 +322,6 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	private void loadMapActionPerformed(java.awt.event.ActionEvent evt) {
 		String s = JOptionPane.showInputDialog(this, "Map name?");
 		loadLevel(s);
-		
 	}
 
 	// sparar banan till fil
@@ -347,7 +346,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(MapLoader.defaultFolder +  File.separator +  name + ".txt", "UTF-8");
-			Game.information(0,"Saving to " + MapLoader.defaultFolder + File.separator +  name + ".txt");
+			Log.msg(Log.INFORMATION,"Saving to " + MapLoader.defaultFolder + File.separator +  name + ".txt");
 			writer.println(width + "," + height);
 
 			// Skriver ut tilesen i v�rlden till filen.
@@ -365,7 +364,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 
 			writer.close();
 		} catch (FileNotFoundException | UnsupportedEncodingException ex) {
-			Game.information(2,"Couldnt create file or unsuported encoding");
+			Log.msg(Log.SEVERE,"Couldnt create file or unsuported encoding");
 		}
 
 	}

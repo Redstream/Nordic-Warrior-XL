@@ -1,6 +1,6 @@
 package game.entity.projectile;
 
-import game.Game;
+import game.Settings;
 import game.entity.Entity;
 import game.graphics.Screen;
 import game.graphics.Sprite;
@@ -46,7 +46,7 @@ public class Projectile extends Entity {
     }
 
     public void render(Screen screen) {
-        screen.renderSprite(getSprite(), (int) x , Game.HEIGHT - (int) y - 75, dir);
+        screen.renderSprite(getSprite(), (int) x , Settings.HEIGHT - (int) y - 75, dir);
     }
 
     public Sprite getSprite() {
