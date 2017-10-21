@@ -27,14 +27,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import game.Game;
-import game.Log;
-import game.entity.mob.Mob;
-import game.entity.mob.player.Player;
-import game.graphics.Screen;
-import game.input.Keyboard;
-import game.level.Level;
-import game.level.MapLoader;
+import spel.Log;
+import spel.entity.mob.Mob;
+import spel.entity.mob.player.Player;
+import spel.graphics.Screen;
+import spel.input.Keyboard;
+import spel.level.Level;
+import spel.level.MapLoader;
 
 public class Mapmaker extends JFrame implements MouseMotionListener, MouseListener {
 
