@@ -297,8 +297,8 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 	}
 
 	public void loadLevel(String mapname) {
-		Log.msg(Log.INFORMATION, "Loading " + mapname + ".txt");
-		level = new Level(mapname + ".txt");
+		Log.msg(Log.INFORMATION, "Loading " + mapname + MapLoader.fileExtension);
+		level = new Level(mapname + MapLoader.fileExtension);
 		
 		this.mobs = level.mobs;
 		nameTextfield.setText(mapname);
@@ -333,7 +333,7 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 
 		// kollar ifall filen finns is�fall fr�gas anv�ndaren om den vill
 		// forts�tta
-		File f = new File(MapLoader.defaultFolder + File.separator + name + ".txt");
+		File f = new File(MapLoader.defaultFolder + File.separator + name + MapLoader.fileExtension);
 		if (f.exists()) {
 			int reply = JOptionPane.showConfirmDialog(this, "A file with that name already exists. \nDo you still want to continue?", "File already exists", JOptionPane.YES_OPTION);
 			if (reply == 1) {
@@ -344,8 +344,8 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		// sparar mapen
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(MapLoader.defaultFolder +  File.separator +  name + ".txt", "UTF-8");
-			Log.msg(Log.INFORMATION,"Saving to " + MapLoader.defaultFolder + File.separator +  name + ".txt");
+			writer = new PrintWriter(MapLoader.defaultFolder +  File.separator +  name + MapLoader.fileExtension, "UTF-8");
+			Log.msg(Log.INFORMATION,"Saving to " + MapLoader.defaultFolder + File.separator +  name + MapLoader.fileExtension);
 			writer.println(width + "," + height);
 
 			// Skriver ut tilesen i v�rlden till filen.

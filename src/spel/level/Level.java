@@ -156,7 +156,7 @@ public class Level extends BasicLevel {
             }
 
         } catch (Exception e) {
-            Log.msg(Log.SEVERE,  "Map file not found.");
+            Log.msg(Log.SEVERE,  "Map file not found at " + path);
         }
     }
 

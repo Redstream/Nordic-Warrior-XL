@@ -1,18 +1,22 @@
 package spel.level;
 
 import spel.Settings;
-import org.apache.commons.io.FileUtils;
 import spel.Game;
 import spel.Log;
 
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class MapLoader {
 
     public static File defaultFolder = new File(System.getProperty("user.home") + File.separator + Settings.NAME + File.separator + "maps");
-    public static String[] defaultMaps = {"Demo-map", "Franzjump", "Franzmaze"};
+    public static String fileExtension = ".map";
+    public static String descExtension = "-description" + fileExtension;
+    private static String[] defaultMaps = {"Demo", "Franzjump", "Franzmaze"};
 
     /**
      * Add all demo maps.
@@ -20,22 +24,26 @@ public class MapLoader {
      */
     public static void addDemoMaps() {
         if (listMaps(defaultFolder).length == 0) {
-            try {
-                URL inputUrl;
-                File dest;
-                for (String map : defaultMaps) {
-                    inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".txt");
-                    dest = new File(defaultFolder + File.separator + map + ".txt");
-                    FileUtils.copyURLToFile(inputUrl, dest);
-                    inputUrl = Game.class.getResource("/res/maps/demo/" + map + ".desc.txt");
-                    if (inputUrl != null) {
-                        dest = new File(defaultFolder + File.separator + map + " .desc.txt");
-                        FileUtils.copyURLToFile(inputUrl, dest);
+            for (String map : defaultMaps) {
+                // Map
+                try (InputStream from = Game.class.getResourceAsStream("/res/maps/demo/" + map + fileExtension)) {
+                    File to = new File(defaultFolder + File.separator + map + fileExtension);
+                    if(from.available() > 0) {
+                        Files.copy(from, to.toPath());
                     }
+                } catch (NullPointerException | IOException e) {
+                    Log.msg(Log.SEVERE, "Couldn't read map file: " + e.toString());
                 }
 
-            } catch (Exception e) {
-                Log.msg(Log.SEVERE, e.toString());
+                // Description
+                try (InputStream from = Game.class.getResourceAsStream("/res/maps/demo/" + map + descExtension)) {
+                    File to = new File(defaultFolder + File.separator + map + descExtension);
+                    if(from.available() > 0) {
+                        Files.copy(from, to.toPath());
+                    }
+                } catch (NullPointerException | IOException e) {
+                    Log.msg(Log.INFORMATION, "Couldn't read map description file for " + map);
+                }
             }
         }
     }
@@ -55,8 +63,8 @@ public class MapLoader {
             if (fileEntry.isDirectory()) {
                 listMaps(fileEntry);
             } else {
-                if (fileEntry.getName().split(".desc.").length == 1) {
-                    maps.add(fileEntry.getName().split(".txt")[0]);
+                if(!fileEntry.getName().contains(MapLoader.descExtension)) {
+                    maps.add(fileEntry.getName().split(MapLoader.fileExtension)[0]);
                 }
             }
         }

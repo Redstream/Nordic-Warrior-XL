@@ -46,7 +46,7 @@ public class LevelSelect extends JPanel {
 
                 if (!lastclicked.equalsIgnoreCase(list.getSelectedValue())) {
                     try {
-                        BufferedReader in = new BufferedReader(new FileReader(MapLoader.defaultFolder + File.separator + level + ".desc.txt"));
+                        BufferedReader in = new BufferedReader(new FileReader(MapLoader.defaultFolder + File.separator + level + MapLoader.descExtension));
                         String s = "";
                         String line;
                         while ((line = in.readLine()) != null) {
@@ -59,7 +59,7 @@ public class LevelSelect extends JPanel {
                     }
                     lastclicked = list.getSelectedValue();
                 } else {
-                    setLevel(list.getSelectedValue() + ".txt");
+                    setLevel(list.getSelectedValue() + MapLoader.fileExtension);
                 }
             }
         };
