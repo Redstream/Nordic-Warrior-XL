@@ -39,7 +39,7 @@ public class Game extends Canvas {
     /**
      * Construct
      */
-    public Game() {
+    private Game() {
         setSize();
         init();
     }
