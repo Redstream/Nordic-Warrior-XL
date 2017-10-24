@@ -120,7 +120,7 @@ public class Level extends BasicLevel {
                 try {
                     s = br.readLine();
                     if (Game.game != null) {
-                        player = new Player(null, this, Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
+                        player = new Player(Game.game.key, this, Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
                     } else {
                         player = new Player(Integer.parseInt(s.split(",")[0]), Integer.parseInt(s.split(",")[1]));
                     }

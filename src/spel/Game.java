@@ -83,7 +83,9 @@ public class Game extends Canvas {
             frame.getContentPane().setSize(screenSize.width, screenSize.height);
             frame.setPreferredSize(new Dimension(screenSize.width, screenSize.height));
             menu = new Menu(screenSize.width, screenSize.height);
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
             frame.setUndecorated(true);
+            GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
         } else {
             frame.getContentPane().setSize(screenSize);
             frame.setPreferredSize(screenSize);

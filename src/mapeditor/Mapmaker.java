@@ -305,7 +305,6 @@ public class Mapmaker extends JFrame implements MouseMotionListener, MouseListen
 		width = level.width;
 		height = level.height;
 
-		Log.debug("" + width);
 		init();
 		drawPanel.setSize(width, height);
 		scrollPane.getViewport().setSize(width, height);

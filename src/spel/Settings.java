@@ -11,7 +11,7 @@ public class Settings {
     public final static int WIDTH = 900;
     public final static int HEIGHT = WIDTH * 9 / 16;
     final static float scale = 2f;
-    final static boolean FULLSCREEN = false;
+    final static boolean FULLSCREEN = true;
 
     // Key Bindings
     public static final int JUMP_KEY = KeyEvent.VK_SPACE;
