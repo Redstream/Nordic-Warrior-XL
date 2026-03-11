@@ -1,0 +1,13 @@
+{
+    "name": "nordic-warrior-xl-web",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "tsc",
+        "serve": "npx serve . -l 8080",
+        "dev": "tsc --watch & npx serve . -l 8080"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nordic Warrior XL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+        #game-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #game {
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            width: 100%;
+            height: 100%;
+        }
+        #menu {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('res/graphics/nordic_warriorXL.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        #menu::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10, 10, 30, 0.55);
+            z-index: 0;
+        }
+        #menu > * {
+            position: relative;
+            z-index: 1;
+        }
+        #menu h1 {
+            color: #e0c097;
+            font-size: 42px;
+            margin-bottom: 8px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+            letter-spacing: 3px;
+        }
+        #menu .subtitle {
+            color: #ccd;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        #menu button {
+            display: block;
+            width: 260px;
+            padding: 14px;
+            margin: 6px;
+            background: rgba(30, 30, 60, 0.8);
+            color: #e0c097;
+            border: 1px solid #e0c097;
+            font-size: 16px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        #menu button:hover {
+            background: rgba(224, 192, 151, 0.9);
+            color: #1a1a2e;
+        }
+        #hud {
+            position: absolute;
+            top: 10px; left: 10px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        #health-bar {
+            width: 150px;
+            height: 12px;
+            background: #333;
+            border: 1px solid #888;
+        }
+        #health-fill {
+            width: 100%;
+            height: 100%;
+            background: #c44;
+            transition: width 0.15s;
+        }
+        #hud-text {
+            color: #fff;
+            font-size: 11px;
+            margin-top: 4px;
+            text-shadow: 1px 1px 2px #000;
+        }
+        #controls-info {
+            color: #aab;
+            font-size: 12px;
+            margin-top: 20px;
+            text-align: center;
+            line-height: 1.8;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        #loading {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('res/graphics/nordic_warriorXL.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0c097;
+            font-size: 20px;
+            z-index: 20;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.9);
+        }
+
+        /* ===== Map Editor ===== */
+        #editor-wrapper {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #222;
+            z-index: 100;
+            flex-direction: row;
+        }
+        #editor-wrapper.active {
+            display: flex;
+        }
+        #editor-canvas-area {
+            flex: 1;
+            overflow: auto;
+            background: #333;
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+        }
+        #editor-canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            cursor: crosshair;
+        }
+        #editor-sidebar {
+            width: 200px;
+            flex-shrink: 0;
+            background: #2a2a3a;
+            color: #ccc;
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+            overflow-y: auto;
+            border-right: 2px solid #555;
+        }
+        #editor-sidebar h3 {
+            padding: 8px 10px;
+            margin: 0;
+            background: #1a1a2e;
+            color: #e0c097;
+            font-size: 14px;
+            border-bottom: 1px solid #444;
+        }
+        .editor-tab-bar {
+            display: flex;
+            background: #1a1a2e;
+        }
+        .editor-tab-bar button {
+            flex: 1;
+            padding: 8px;
+            background: #2a2a3a;
+            color: #aaa;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .editor-tab-bar button.active {
+            color: #e0c097;
+            border-bottom-color: #e0c097;
+            background: #333;
+        }
+        .editor-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .editor-list li {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            transition: background 0.1s;
+        }
+        .editor-list li:hover {
+            background: #3a3a4a;
+        }
+        .editor-list li.selected {
+            background: #4a4a6a;
+            color: #e0c097;
+        }
+        #editor-toolbar {
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            background: #1a1a2e;
+            border-bottom: 1px solid #444;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #editor-toolbar button {
+            padding: 5px 12px;
+            background: #2a2a4a;
+            color: #e0c097;
+            border: 1px solid #555;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        #editor-toolbar button:hover {
+            background: #e0c097;
+            color: #1a1a2e;
+        }
+        #editor-toolbar label {
+            color: #aaa;
+            font-size: 12px;
+        }
+        #editor-toolbar input {
+            width: 60px;
+            padding: 3px 6px;
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            font-size: 12px;
+        }
+        #editor-coords {
+            color: #888;
+            font-size: 11px;
+            margin-left: auto;
+        }
+        .editor-panel { display: none; }
+        .editor-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <canvas id="game" width="900" height="506"></canvas>
+        <div id="hud" style="display:none;">
+            <div id="health-bar"><div id="health-fill"></div></div>
+            <div id="hud-text"></div>
+        </div>
+        <div id="menu">
+            <h1>NORDIC WARRIOR XL</h1>
+            <div class="subtitle">A Viking Platformer</div>
+            <button onclick="game.startLevel('Demo')">Demo</button>
+            <button onclick="game.startLevel('Franzjump')">Franz Jump</button>
+            <button onclick="game.startLevel('Franzmaze')">Franz Maze</button>
+            <button onclick="game.openEditor()" style="margin-top: 16px; border-color: #8a8;">Map Editor</button>
+            <div id="controls-info">
+                <b>Controls:</b><br>
+                A/D or Arrow Keys — Move &nbsp;|&nbsp; Space — Jump<br>
+                X — Throw Axe &nbsp;|&nbsp; R — Restart &nbsp;|&nbsp; ESC — Menu<br>
+                C — Set Checkpoint
+            </div>
+        </div>
+        <div id="loading">Loading assets...</div>
+    </div>
+
+    <!-- Map Editor -->
+    <div id="editor-wrapper">
+        <div id="editor-sidebar">
+            <div class="editor-tab-bar">
+                <button class="active" onclick="mapEditor.switchTab('tiles', this)">Tiles</button>
+                <button onclick="mapEditor.switchTab('other', this)">Other</button>
+            </div>
+            <div id="editor-tiles-panel" class="editor-panel active">
+                <ul class="editor-list" id="editor-tile-list"></ul>
+            </div>
+            <div id="editor-other-panel" class="editor-panel">
+                <ul class="editor-list" id="editor-other-list"></ul>
+            </div>
+        </div>
+        <div style="display:flex; flex-direction:column; flex:1; min-width:0; min-height:0;">
+            <div id="editor-toolbar">
+                <button onclick="mapEditor.newMap()">New</button>
+                <button onclick="mapEditor.saveMap()">Save</button>
+                <button onclick="mapEditor.loadMapPrompt()">Load</button>
+                <button onclick="mapEditor.playTest()">Play Test</button>
+                <button onclick="mapEditor.close()">Back to Menu</button>
+                <label>Name: <input id="editor-name" type="text" value="untitled"></label>
+                <span id="editor-coords">0, 0</span>
+            </div>
+            <div id="editor-canvas-area">
+                <canvas id="editor-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="dist/game.js"></script>
+</body>
+</html>
