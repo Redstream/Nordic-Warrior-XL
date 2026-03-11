@@ -7,6 +7,105 @@ const TILE_SIZE = 36;
 const GRAVITY = 0.4;
 const ASSET_BASE = 'res/graphics/';
 
+// ===== Sound Effects =====
+
+const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+function playSfx(type: 'throw' | 'explode' | 'die'): void {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    if (type === 'throw') {
+        // Heavy thunk + low whoosh
+        const t = audioCtx.currentTime;
+        // Low thud impact
+        const thud = audioCtx.createOscillator();
+        const thudGain = audioCtx.createGain();
+        thud.type = 'sine';
+        thud.frequency.setValueAtTime(120, t);
+        thud.frequency.exponentialRampToValueAtTime(50, t + 0.15);
+        thudGain.gain.setValueAtTime(0.3, t);
+        thudGain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        thud.connect(thudGain).connect(audioCtx.destination);
+        thud.start(t);
+        thud.stop(t + 0.15);
+        // Heavy whoosh
+        const whooshLen = audioCtx.sampleRate * 0.2;
+        const whooshBuf = audioCtx.createBuffer(1, whooshLen, audioCtx.sampleRate);
+        const wd = whooshBuf.getChannelData(0);
+        for (let i = 0; i < whooshLen; i++) {
+            const env = Math.sin(Math.PI * i / whooshLen);
+            wd[i] = (Math.random() * 2 - 1) * env;
+        }
+        const whoosh = audioCtx.createBufferSource();
+        whoosh.buffer = whooshBuf;
+        const wGain = audioCtx.createGain();
+        wGain.gain.setValueAtTime(0.12, t);
+        const wFilter = audioCtx.createBiquadFilter();
+        wFilter.type = 'bandpass';
+        wFilter.frequency.setValueAtTime(300, t);
+        wFilter.Q.setValueAtTime(1.5, t);
+        whoosh.connect(wFilter).connect(wGain).connect(audioCtx.destination);
+        whoosh.start(t);
+        whoosh.stop(t + 0.2);
+    } else if (type === 'explode') {
+        // Grand layered explosion
+        const t = audioCtx.currentTime;
+        // Layer 1: deep bass boom
+        const boom = audioCtx.createOscillator();
+        const boomGain = audioCtx.createGain();
+        boom.type = 'sine';
+        boom.frequency.setValueAtTime(80, t);
+        boom.frequency.exponentialRampToValueAtTime(20, t + 0.6);
+        boomGain.gain.setValueAtTime(0.4, t);
+        boomGain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        boom.connect(boomGain).connect(audioCtx.destination);
+        boom.start(t);
+        boom.stop(t + 0.6);
+        // Layer 2: mid crunch
+        const crunch = audioCtx.createOscillator();
+        const crunchGain = audioCtx.createGain();
+        crunch.type = 'sawtooth';
+        crunch.frequency.setValueAtTime(200, t);
+        crunch.frequency.exponentialRampToValueAtTime(40, t + 0.4);
+        crunchGain.gain.setValueAtTime(0.15, t);
+        crunchGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        crunch.connect(crunchGain).connect(audioCtx.destination);
+        crunch.start(t);
+        crunch.stop(t + 0.4);
+        // Layer 3: long noise tail
+        const noiseLen = audioCtx.sampleRate * 0.8;
+        const noiseBuf = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
+        const nd = noiseBuf.getChannelData(0);
+        for (let i = 0; i < noiseLen; i++) {
+            nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / noiseLen, 2);
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = noiseBuf;
+        const nGain = audioCtx.createGain();
+        nGain.gain.setValueAtTime(0.3, t);
+        nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+        const nFilter = audioCtx.createBiquadFilter();
+        nFilter.type = 'lowpass';
+        nFilter.frequency.setValueAtTime(2000, t);
+        nFilter.frequency.exponentialRampToValueAtTime(60, t + 0.8);
+        noise.connect(nFilter).connect(nGain).connect(audioCtx.destination);
+        noise.start(t);
+        noise.stop(t + 0.8);
+    } else if (type === 'die') {
+        // Descending tone
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+    }
+}
+
 // ===== Asset Loading =====
 
 interface SheetMap {
@@ -578,6 +677,7 @@ class Player extends Mob {
         if (this.level.time > this.axeTimer) {
             this.projectiles.push(new AxeProjectile(this.x, this.y, this.dir, this.level));
             this.axeTimer = this.level.time + cooldown;
+            playSfx('throw');
         }
     }
 
@@ -593,6 +693,7 @@ class Player extends Mob {
         this.dead = true;
         this.animation = this.animations[3];
         this.animation.start(150);
+        playSfx('die');
     }
 }
 
@@ -692,6 +793,7 @@ class Goblin extends Mob {
     private selfDestruct(): void {
         Goblin.exploding++;
         this.destructTime += 10 * Math.floor(Math.random() * 50);
+        playSfx('explode');
         if (this.animations[1]) {
             this.animation = this.animations[1];
             this.animation.start(400);
