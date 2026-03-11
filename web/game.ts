@@ -24,7 +24,7 @@ function processImage(img: HTMLImageElement): HTMLCanvasElement {
     const imageData = ctx.getImageData(0, 0, c.width, c.height);
     const d = imageData.data;
     for (let i = 0; i < d.length; i += 4) {
-        if (d[i] >= 240 && d[i + 1] <= 15 && d[i + 2] >= 240) {
+        if (d[i] >= 200 && d[i + 1] <= 50 && d[i + 2] >= 200) {
             d[i + 3] = 0;
         }
     }
