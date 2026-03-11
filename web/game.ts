@@ -1283,6 +1283,8 @@ class MapEditor {
     otherIndex = -1;
     painting = false;
     erasing = false;
+    mouseGX = -1;
+    mouseGY = -1;
 
     constructor() {
         this.canvas = document.getElementById('editor-canvas') as HTMLCanvasElement;
@@ -1339,10 +1341,20 @@ class MapEditor {
             }
         });
 
+        this.canvas.addEventListener('mouseleave', () => {
+            this.mouseGX = -1;
+            this.mouseGY = -1;
+            this.redraw();
+        });
+
         this.canvas.addEventListener('mousemove', (e) => {
+            const { gx, gy } = this.tileAt(e);
+            this.mouseGX = gx;
+            this.mouseGY = gy;
             this.updateCoords(e);
             if (this.painting) this.handlePaint(e);
             if (this.erasing) this.handleErase(e);
+            else this.redraw();
         });
 
         window.addEventListener('mouseup', () => {
@@ -1538,6 +1550,25 @@ class MapEditor {
             ctx.strokeRect(this.finishX, fy, this.finishW, this.finishH);
             ctx.fillStyle = '#ff0';
             ctx.fillText('Finish', this.finishX + 4, fy + 12);
+        }
+
+        // Draw tile preview at cursor
+        if (this.activeTab === 'tiles' && this.mouseGX >= 0 && this.mouseGY >= 0 &&
+            this.mouseGX < this.mapWidth && this.mouseGY < this.mapHeight) {
+            const def = TILE_DEFS[this.activeTile];
+            const sheet = sheets['tiles'];
+            if (def && sheet) {
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(
+                    sheet,
+                    def.srcX, def.srcY, def.w, def.h,
+                    this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, def.w, def.h,
+                );
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
         }
     }
 
