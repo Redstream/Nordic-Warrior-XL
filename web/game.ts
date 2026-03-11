@@ -1265,6 +1265,12 @@ const TILE_NAMES = [
 
 const OTHER_ITEMS = ['Player Spawn', 'Level Finish', 'Skeleton', 'Goblin', 'Boss'];
 
+const MOB_SPRITES: { sheet: string; w: number; h: number }[] = [
+    { sheet: 'skeleton', w: 36, h: 72 },
+    { sheet: 'goblin', w: 72, h: 72 },
+    { sheet: 'boss', w: 144, h: 144 },
+];
+
 class MapEditor {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -1285,6 +1291,8 @@ class MapEditor {
     erasing = false;
     mouseGX = -1;
     mouseGY = -1;
+    mousePX = -1;
+    mousePY = -1;
 
     constructor() {
         this.canvas = document.getElementById('editor-canvas') as HTMLCanvasElement;
@@ -1344,13 +1352,18 @@ class MapEditor {
         this.canvas.addEventListener('mouseleave', () => {
             this.mouseGX = -1;
             this.mouseGY = -1;
+            this.mousePX = -1;
+            this.mousePY = -1;
             this.redraw();
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
             const { gx, gy } = this.tileAt(e);
+            const { px, py } = this.pixelAt(e);
             this.mouseGX = gx;
             this.mouseGY = gy;
+            this.mousePX = px;
+            this.mousePY = py;
             this.updateCoords(e);
             if (this.painting) this.handlePaint(e);
             if (this.erasing) this.handleErase(e);
@@ -1522,15 +1535,16 @@ class MapEditor {
             }
         }
 
-        // Draw mobs as labels
-        ctx.font = '11px monospace';
-        const mobNames = ['Skeleton', 'Goblin', 'Boss'];
+        // Draw mobs as sprites
         for (const m of this.mobs) {
             const screenY = this.mapHeight * TILE_SIZE - m.y;
-            ctx.fillStyle = m.id === 1 ? '#0f0' : m.id === 2 ? '#f80' : '#f44';
-            ctx.fillRect(m.x - 2, screenY - 12, ctx.measureText(mobNames[m.id] || '?').width + 4, 14);
-            ctx.fillStyle = '#fff';
-            ctx.fillText(mobNames[m.id] || '?', m.x, screenY);
+            const ms = MOB_SPRITES[m.id];
+            if (ms) {
+                const sheet = sheets[ms.sheet];
+                if (sheet) {
+                    ctx.drawImage(sheet, 0, 0, ms.w, ms.h, m.x - ms.w / 2, screenY - ms.h, ms.w, ms.h);
+                }
+            }
         }
 
         // Draw player spawn
@@ -1552,22 +1566,35 @@ class MapEditor {
             ctx.fillText('Finish', this.finishX + 4, fy + 12);
         }
 
-        // Draw tile preview at cursor
-        if (this.activeTab === 'tiles' && this.mouseGX >= 0 && this.mouseGY >= 0 &&
+        // Draw preview at cursor
+        if (this.mouseGX >= 0 && this.mouseGY >= 0 &&
             this.mouseGX < this.mapWidth && this.mouseGY < this.mapHeight) {
-            const def = TILE_DEFS[this.activeTile];
-            const sheet = sheets['tiles'];
-            if (def && sheet) {
-                ctx.globalAlpha = 0.5;
-                ctx.drawImage(
-                    sheet,
-                    def.srcX, def.srcY, def.w, def.h,
-                    this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, def.w, def.h,
-                );
-                ctx.globalAlpha = 1;
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            if (this.activeTab === 'tiles') {
+                const def = TILE_DEFS[this.activeTile];
+                const sheet = sheets['tiles'];
+                if (def && sheet) {
+                    ctx.globalAlpha = 0.5;
+                    ctx.drawImage(
+                        sheet,
+                        def.srcX, def.srcY, def.w, def.h,
+                        this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, def.w, def.h,
+                    );
+                    ctx.globalAlpha = 1;
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(this.mouseGX * TILE_SIZE, this.mouseGY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            } else if (this.otherIndex >= 2 && this.mousePX >= 0) {
+                // Mob preview at exact cursor position
+                const ms = MOB_SPRITES[this.otherIndex - 2];
+                if (ms) {
+                    const sheet = sheets[ms.sheet];
+                    if (sheet) {
+                        ctx.globalAlpha = 0.5;
+                        ctx.drawImage(sheet, 0, 0, ms.w, ms.h, this.mousePX - ms.w / 2, this.mousePY - ms.h, ms.w, ms.h);
+                        ctx.globalAlpha = 1;
+                    }
+                }
             }
         }
     }
