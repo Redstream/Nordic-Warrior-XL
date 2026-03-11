@@ -113,6 +113,15 @@
             line-height: 1.8;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
+        #version-info {
+            position: absolute !important;
+            bottom: 8px;
+            left: 10px;
+            color: #998a70;
+            font-size: 11px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.9);
+            z-index: 2;
+        }
         #loading {
             position: absolute;
             top: 0; left: 0;
@@ -271,6 +280,7 @@
                 X — Throw Axe &nbsp;|&nbsp; R — Restart &nbsp;|&nbsp; ESC — Menu<br>
                 C — Set Checkpoint
             </div>
+            <div id="version-info"></div>
         </div>
         <div id="loading">Loading assets...</div>
     </div>

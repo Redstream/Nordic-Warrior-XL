@@ -1537,6 +1537,8 @@ window.addEventListener('load', async () => {
         game = new Game();
         // Expose to window for menu button onclick handlers
         (window as any).game = game;
+        const vi = document.getElementById('version-info');
+        if (vi) vi.textContent = 'v' + ((window as any).GAME_VERSION || 'dev');
     } catch (e) {
         const loading = document.getElementById('loading')!;
         loading.textContent = 'Failed to load assets. Make sure to run from a local server (e.g. npx serve .)';

@@ -32,6 +32,11 @@ jobs:
           npm ci
           npx tsc
 
+      - name: Inject version
+        run: |
+          HASH=$(git rev-parse --short HEAD)
+          sed -i "s|</head>|<script>window.GAME_VERSION=\"$HASH\";</script></head>|" web/index.html
+
       - name: Prepare site
         run: |
           mkdir _site
