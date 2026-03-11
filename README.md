@@ -2,7 +2,7 @@
 2D Platform game with a nostalgic feel. Created as a Gymnasiearbete/High school project in 2014
 
 ##### Want to play the game?
-Just download and run 'Nordic-Warrior-XL.jar'
+[Just download and run 'Nordic-Warrior-XL.jar'](https://redstream.github.io/Nordic-Warrior-XL/)
 
 ##### Screenshots
 Throw Axes:  
